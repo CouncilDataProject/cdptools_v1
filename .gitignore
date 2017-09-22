@@ -1,0 +1,5 @@
+configure_keys.py
+firebase_credentials.json
+__pycache__
+resources
+testing.py

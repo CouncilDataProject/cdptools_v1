@@ -1,9 +1,9 @@
-# Council Data Project
+# Transcription Runner
 Multiple tools, mainly focused on searching, transparency, and accountability for City Councils.
 
 Created by Jackson Maxfield Brown and Dr. Nicholas Weber
 
-**If you are looking to setup your own version of CDP, jump to: [Setup and Automation](#setup-and-automation)**
+**If you are looking to setup your own version of the transcription runner, jump to: [Setup and Automation](#setup-and-automation)**
 
 - [Project Updates and Timeline](#updates)
 - [Background](#background)
@@ -120,7 +120,7 @@ Current Development Items are marked in **_bolded italics_**
 
 [Back to Updates](#updates)
 
-[Back to Top](#council-data-project)
+[Back to Top](#transcription-runner)
 
 ## Background
 A bit about the who, what, when, where, why, and how.
@@ -153,7 +153,7 @@ There are multiple researchers working in computational linguistics on civic and
 
 [Back to Background](#background)
 
-[Back to Top](#council-data-project)
+[Back to Top](#transcription-runner)
 
 ## Planning and Ideation
 While there are many paths this project could have taken, centering in on events occurred due to the planning and ideation processes.
@@ -174,7 +174,7 @@ And lastly, the project will aim to be structured as future plug-and-play work f
 
 [Back to Planning and Ideation](#planning-and-ideation)
 
-[Back to Top](#council-data-project)
+[Back to Top](#transcription-runner)
 
 ## Development
 Development aims, uses, goals, and etc.
@@ -207,7 +207,7 @@ Examples include:
 
 [Back to Development](#development)
 
-[Back to Top](#council-data-project)
+[Back to Top](#transcription-runner)
 
 ## Tools
 Frameworks, libraries, and more that are being used by this project with explanations on how to used them and why they were selected to be used.
@@ -497,8 +497,8 @@ def my_scraper(path, routes, prints=True):
 get_video_feeds(packed_routes=video_routes, storage_path=storage_path, scraping_function=my_scraper)
 ```
 
-[Back to Top](#council-data-project)
+[Back to Top](#transcription-runner)
 
 ## Final Comments
 
-[Back to Top](#council-data-project)
+[Back to Top](#transcription-runner)

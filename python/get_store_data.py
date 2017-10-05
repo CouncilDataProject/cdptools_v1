@@ -613,7 +613,7 @@ def name_audio_splits(audio_directory, output_directory, audio_splits):
     return split_names
 
 # split_audio_into_parts for an audio_directory and a targetted audio file
-def split_audio_into_parts(audio_directory, audio_file, naming_function=name_audio_splits, split_length=18000, override_splits=False, splits_directory='splits/', prints=True):
+def split_audio_into_parts(audio_directory, transcripts_directory, audio_file, naming_function=name_audio_splits, split_length=18000, delete_splits=False, override_splits=False, splits_directory='splits/', prints=True):
 
     '''Create slices of an audio file.
 
@@ -622,12 +622,17 @@ def split_audio_into_parts(audio_directory, audio_file, naming_function=name_aud
     audio_directory -- the directory or folder os path for where the audio will be stored.
         example: 'C:/transcription_runner/seattle/audio/'
 
+    transcripts_directory -- the directory of folder os path for where the transcript will be stored.
+        example: 'C:/transcription_runner/seattle/transcripts/'
+
     audio_file -- the specific audio file to be split into smaller slices.
         example: 'transporation_112315.wav'
 
     naming_function -- the audio split naming function.
 
     split_length -- integer value time in ms for length of each audio split. Default: 18000ms (18 seconds)
+
+    delete_splits -- boolean value to determine if splits should be removed after transcription process. Default: False (don't delete audio splits)
 
     override_splits -- boolean value to determine if previous audio splits created should be overwritten. Default: False (don't rewrite audio splits)
 
@@ -652,10 +657,10 @@ def split_audio_into_parts(audio_directory, audio_file, naming_function=name_aud
     store_directory = check_path_safety(audio_directory + subfolder)
 
     # if the transcript exists already, no need to create splits unless directly overriden
-    if os.path.exists(audio_directory + splits_directory + audio_file[:-4] + '.txt') and not override_splits:
+    if os.path.exists(transcripts_directory + audio_file[:-4] + '.txt') and delete_splits:
 
         if prints:
-            print('transcript exists, no need for splits...')
+            print('transcript exists, and delete_splits marked true, no need to create splits...')
 
         return store_directory
 
@@ -867,7 +872,7 @@ def generate_transcripts_from_directory(audio_directory, transcripts_directory, 
         if '.wav' in filename:
 
             # create audio splits and save the splits directory for use in processing transcript
-            split_audio_dir = split_audio_into_parts(audio_directory=audio_directory, audio_file=filename, splits_directory=audio_splits_directory, prints=prints)
+            split_audio_dir = split_audio_into_parts(audio_directory=audio_directory, transcripts_directory=transcripts_directory, audio_file=filename, splits_directory=audio_splits_directory, delete_splits=delete_splits, prints=prints)
 
             # create the transcript from the audio split directory
             transcript = generate_transcript_from_audio_splits(audio_directory=split_audio_dir, transcripts_directory=transcripts_directory, filename=filename, naming_function=transcript_naming_function, prints=prints)

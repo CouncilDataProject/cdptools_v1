@@ -88,7 +88,7 @@ def generate_log_file(log_name, log_type, log_object, log_directory):
     time.sleep(1)
 
 # run_cdp function used to collect, transcribe, and store videos
-def run_cdp(project_directory, json_directory, log_directory, video_routes, scraping_function, pull_from_database, database_head, relevant_tfidf_storage_key, commit_to_database, delete_videos=False, delete_splits=False, test_search_term='bicycle infrastructure', prints=True, block_sleep_duration=21600, run_duration=-1, logging=True):
+def run_cdp(project_directory, json_directory, log_directory, video_routes, scraping_function, pull_from_database, database_head, versioning_head, relevant_tfidf_storage_key, commit_to_database, delete_videos=False, delete_splits=False, test_search_term='bicycle infrastructure', prints=True, block_sleep_duration=21600, run_duration=-1, logging=True):
 
     '''Run the backend transcription, local, and database storage system.
 
@@ -198,7 +198,7 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
             # @RUN
             # Run for tfidf saftey
             data_pull_start = time.time()
-            prior_stored_data = pull_from_database(database_head=database_head)
+            prior_stored_data = pull_from_database(database_head=versioning_head)
             data_pull_duration = time.time() - data_pull_start
 
             block['data_pull_duration'] = (float(data_pull_duration) / 60.0 / 60.0)
@@ -279,9 +279,6 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
 
 # VARIABLES AND OBJECTS
 
-# the project directory where all files will be stored
-project_directory = 'D:/transcription_runner/resources/'
-
 # video_routes is the seattle_channel packed_routes object
 # change this to your own video routing
 video_routes = {
@@ -315,6 +312,10 @@ from configure_keys import *
 import pyrebase
 firebase = pyrebase.initialize_app(pyrebase_config)
 pyrebase_head = firebase.database()
+pyrebase_versioning = pyrebase_head.child('transcript_versioning').get()
+
+# the project directory where all files will be stored
+project_directory = 'C:/Users/jmax825/Desktop/transcription_runner/resources/'
 
 # actual runner function call
-run_cdp(project_directory=project_directory, json_directory=(project_directory + 'stores/'), video_routes=video_routes, scraping_function=scrape_seattle_channel, log_directory=(project_directory + 'logs/'), pull_from_database=get_firebase_data, database_head=pyrebase_head, relevant_tfidf_storage_key='events_tfidf', commit_to_database=commit_to_firebase, delete_videos=True, delete_splits=True)
+run_cdp(project_directory=project_directory, json_directory=(project_directory + 'stores/'), video_routes=video_routes, scraping_function=scrape_seattle_channel, log_directory=(project_directory + 'logs/'), pull_from_database=get_firebase_data, database_head=pyrebase_head, versioning_head=pyrebase_versioning, relevant_tfidf_storage_key='events_tfidf', commit_to_database=commit_to_firebase, delete_videos=True, delete_splits=True)

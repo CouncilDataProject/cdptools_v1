@@ -916,7 +916,7 @@ def generate_transcripts_from_directory(audio_directory, transcripts_directory, 
 # RELEVANCY
 
 # generate_words_from_doc for a document
-def generate_words_from_doc(document, filename, versioning=dict(), prints=True):
+def generate_words_from_doc(document, filename, versioning, prints=True):
 
     '''Generate the terms and term frequency in a single document.
 
@@ -939,6 +939,9 @@ def generate_words_from_doc(document, filename, versioning=dict(), prints=True):
     # construct results dictionary object to store all generated information
     results = dict()
 
+    # construct versioning dictionary object to store all transcript versions
+    versions = list()
+
     # construct base term frequency dictionary object to store term frequency information
     results['tf'] = dict()
 
@@ -950,16 +953,16 @@ def generate_words_from_doc(document, filename, versioning=dict(), prints=True):
 
     # try to find most recent version
     try:
-        v_key = filename[:-4]
-        most_recent = len(versioning[v_key]) - 1
-        transcript = versioning[v_key][most_recent]['full_text']
-        results['versions'] = versioning[v_key]
+        most_recent = len(versioning) - 1
+        transcript = versioning[most_recent]['full_text']
+        versions = versioning
 
         if prints:
             print('using previously stored transcript')
 
     # no version, open the file
     except:
+
         # open the transcription file and read the content
         with open(document, 'r') as transcript_file:
             transcript = transcript_file.read()
@@ -967,11 +970,15 @@ def generate_words_from_doc(document, filename, versioning=dict(), prints=True):
         transcript_file.close()
         time.sleep(2)
 
-        results['versions'] = list()
         to_append_version = dict()
         to_append_version['full_text'] = transcript
-        to_append_version['datetime'] = str(datetime.datetime.now())
-        results['versions'].append(to_append_version)
+
+        current_dt = datetime.datetime.now()
+        split_point = filename.rfind('_')
+
+        to_append_version['datetime'] = str(current_dt)
+        to_append_version['version_shortname'] = filename[:split_point] + '_' + str(current_dt.date()) + 'T' + str(current_dt.hour) + '-' + str(current_dt.minute)
+        versions.append(to_append_version)
 
         if prints:
             print('using newly created transcript')
@@ -1003,6 +1010,9 @@ def generate_words_from_doc(document, filename, versioning=dict(), prints=True):
             # construct the synonyms list
             synonym_add_list = list()
 
+            # construct the nearby words list
+            nearby_words_list = list()
+
             # to_check_synonyms = dictionary.synonym(word)
             #
             # if type(to_check_synonyms) is list:
@@ -1011,7 +1021,7 @@ def generate_words_from_doc(document, filename, versioning=dict(), prints=True):
             #             synonym_add_list.append(synonym)
 
             # initialize the word counter and add the synonyms
-            results['tf'][word] = {'count': 1, 'synonyms': synonym_add_list}
+            results['tf'][word] = {'count': 1, 'synonyms': synonym_add_list, 'nearby_words': nearby_words_list}
 
     # store the word length of the transcription
     results['length'] = float(len(words))
@@ -1026,13 +1036,13 @@ def generate_words_from_doc(document, filename, versioning=dict(), prints=True):
         results['tf'][word]['score'] = float(data['count']) / results['length']
 
     if prints:
-        print('secondary pass for transcript complete, sending completed dictionary')
+        print('secondary pass for transcript complete, sending completed items')
 
     # return the completed term frequency dictionary
-    return results
+    return results, versions
 
 # generate_tfidf_from_directory for a directory of transcripts
-def generate_tfidf_from_directory(transcript_directory, storage_directory, stored_data=None, prints=True):
+def generate_tfidf_from_directory(transcript_directory, storage_directory, stored_versions=None, prints=True):
 
     '''Generate the tfidf JSON tree for a directory of transcripts.
 
@@ -1044,7 +1054,7 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
     storage_directory -- the directory or folder os path for where the storage (JSON) files will be stored.
         example: 'C:/transcription_runner/seattle/json/'
 
-    stored_data -- the previously stored tfidf data, retrieved either from local storage or database storage. Default: None
+    stored_versions -- the previously stored tfidf data, retrieved either from local storage or database storage. Default: None
 
     prints -- boolean value to determine to show helpful print statements during the course of the run to indicate where the runner is at in the process. Default: True (show prints)
     '''
@@ -1063,13 +1073,13 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
     versioning = dict()
 
     # check if the previously stored data falls into the local or database storage conventions used by this system
-    if (type(stored_data) is collections.OrderedDict) or (type(stored_data) is dict):
+    if (type(stored_versions) is collections.OrderedDict) or (type(stored_versions) is dict):
 
         # for each transcript in the previously stored data complete rewrite process if needed
-        for key in stored_data['transcripts']:
+        for key in stored_versions:
 
             # check for versions created not by this process
-            versions = stored_data['transcripts'][key]['versions']
+            versions = stored_versions[key]
             versioning[key] = versions
             most_recent = len(versions) - 1
 
@@ -1091,7 +1101,7 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
                     print('rewrote file:', transcript_directory + key + '.txt')
                     print('\tusing text:', versions[most_recent]['full_text'][:20])
 
-    # initialize results dictionary
+    # initialize results dictionaries
     results = dict()
 
     # initialize base dictionaries for storage of deep information
@@ -1109,8 +1119,15 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
             # increment total transcriptions counter
             transcript_counter += 1
 
-            # get words information for file
-            file_results = generate_words_from_doc(document=transcript_directory+filename, filename=filename, versioning=versioning, prints=prints)
+            try:
+                # get words information for file
+                file_results, file_versions = generate_words_from_doc(document=transcript_directory+filename, filename=filename, versioning=versioning[filename[:-4]], prints=prints)
+
+            except:
+                # no versioning, create new
+                file_results, file_versions = generate_words_from_doc(document=transcript_directory+filename, filename=filename, versioning=None, prints=prints)
+
+            versioning[filename[:-4]] = file_versions
 
             if prints:
                 print('adding word set to corpus...')
@@ -1158,6 +1175,8 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
                 # actual computation
                 data['tfidf'][word] = float(score['score']) * math.log(results['corpus'] / float(results['words'][word]))
 
+        del data['tf']
+
     if prints:
         print('completed all files, storing and returning results for:', transcript_directory)
         print('----------------------------------------------------------------------------------------')
@@ -1169,12 +1188,15 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
     with open(storage_directory + 'tfidf.json', 'w') as outfile:
         json.dump(results, outfile)
 
+    with open(storage_directory + 'events_versioning.json', 'w') as outfile:
+        json.dump(versioning, outfile)
+
     # file safety
     outfile.close()
     time.sleep(1)
 
     # return the final dictionary object
-    return results
+    return results, versioning
 
 # predict_relevancy for a corpus of tfidf documents
 def predict_relevancy(search, tfidf_store, edit_distance=True, adjusted_distance_stop = 0.26, results=10):
@@ -1279,7 +1301,7 @@ def get_firebase_data(database_head):
     Arguments:
 
     database_head -- the pyrebase object where you want to pull data from.
-        example: pyrebase object for 'firebase/'
+        example: pyrebase object for 'firebase/transcript_versioning/'
     '''
 
     return database_head.get().val()
@@ -1287,7 +1309,7 @@ def get_firebase_data(database_head):
 # COMBINING AND STORING
 
 # combine_data_sources for JSON files of video feeds and tfidf tree
-def combine_data_sources(feeds_store, tfidf_store, storage_directory, prints=True):
+def combine_data_sources(feeds_store, tfidf_store, versioning_store, storage_directory, prints=True):
 
     '''Combine feeds storage and tfidf storage objects into a single object.
 
@@ -1332,10 +1354,17 @@ def combine_data_sources(feeds_store, tfidf_store, storage_directory, prints=Tru
     tfidf_file.close()
     time.sleep(1)
 
+    with open(versioning_store, 'r') as versioning_file:
+        versioning_data = json.load(versioning_file)
+
+    versioning_file.close()
+    time.sleep(1)
+
     # initialize the combined_data dictionary to be stored
     combined_data = dict()
     combined_data['events'] = dict()
     combined_data['events_tfidf'] = tfidf_data
+    combined_data['transcipt_versioning'] = versioning_data
 
     # place each item from the feeds data into the matching combined_data location
     for item in feeds_data:

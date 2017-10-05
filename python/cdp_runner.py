@@ -101,7 +101,7 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
         example path: 'C:/transcription_runner/seattle/json/'
 
     log_directory -- the directory or folder os path for where all created and generated log files will be stored.
-        example path: 'C:transcription_runner/seattle/logs/'
+        example path: 'C:/transcription_runner/seattle/logs/'
 
     video_routes -- the packed_routes dictionary object that contains labeling/ pathing as a each key, and a list of page url and a more specific naming target.
         formatted:

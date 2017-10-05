@@ -312,7 +312,7 @@ from configure_keys import *
 import pyrebase
 firebase = pyrebase.initialize_app(pyrebase_config)
 pyrebase_head = firebase.database()
-pyrebase_versioning = pyrebase_head.child('transcript_versioning').get()
+pyrebase_versioning = pyrebase_head.child('transcript_versioning')
 
 # the project directory where all files will be stored
 project_directory = 'C:/Users/jmax825/Desktop/transcription_runner/resources/'

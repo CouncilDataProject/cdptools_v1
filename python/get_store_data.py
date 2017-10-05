@@ -607,7 +607,7 @@ def name_audio_splits(audio_directory, output_directory, audio_splits):
 
     # simple name by index value
     for i in range(len(audio_splits)):
-        split_names[project_directory + output_directory + str(i) + '.wav'] = audio_splits[i]
+        split_names[audio_directory + output_directory + str(i) + '.wav'] = audio_splits[i]
 
     # return dict
     return split_names

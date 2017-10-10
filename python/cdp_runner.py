@@ -230,7 +230,7 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
             # @RUN
             # Run for data combination
             combination_start = time.time()
-            combine_data_sources(feeds_store=(json_directory + 'video_feeds.json'), tfidf_store=(json_directory + 'tfidf.json'), storage_directory=json_directory, prints=prints)
+            combine_data_sources(feeds_store=(json_directory + 'video_feeds.json'), tfidf_store=(json_directory + 'tfidf.json'), versioning_store=(json_directory + 'events_versioning.json'), storage_directory=json_directory, prints=prints)
             combination_duration = time.time() - combination_start
 
             block['combination_duration'] = (float(combination_duration) / 60.0 / 60.0)

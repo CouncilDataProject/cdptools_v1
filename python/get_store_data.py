@@ -1395,7 +1395,7 @@ def combine_data_sources(feeds_store, tfidf_store, versioning_store, storage_dir
     curr_date = current_dt.date()
     curr_time = current_dt.time()
 
-    result_log_file = storage_directory + 'combined_data_' + str(curr_date) + 'T' + str(curr_time) + '.json'
+    result_log_file = storage_directory + 'combined_data_' + str(curr_date) + 'T' + str(curr_time).replace(':', '-') + '.json'
 
     with open(result_log_file, 'w') as combined_log_file:
         json.dump(combined_data, combined_log_file)

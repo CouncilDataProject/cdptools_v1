@@ -88,7 +88,7 @@ def generate_log_file(log_name, log_type, log_object, log_directory):
     time.sleep(1)
 
 # run_cdp function used to collect, transcribe, and store videos
-def run_cdp(project_directory, json_directory, log_directory, video_routes, scraping_function, pull_from_database, database_head, versioning_head, relevant_tfidf_storage_key, commit_to_database, delete_videos=False, delete_splits=False, test_search_term='bicycle infrastructure', prints=True, block_sleep_duration=21600, run_duration=-1, logging=True):
+def run_cdp(project_directory, json_directory, log_directory, video_routes, scraping_function, pull_from_database, database_head, versioning_head, relevant_tfidf_storage_key, commit_to_database, delete_videos=False, delete_splits=False, test_search_term='bicycle infrastructure', prints=True, block_sleep_duration=86400, run_duration=-1, logging=True):
 
     '''Run the backend transcription, local, and database storage system.
 
@@ -133,7 +133,7 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
 
     prints -- boolean value to determine to show helpful print statements during the course of the run to indicate where the runner is at in the process. Default: True (show prints)
 
-    block_sleep_duration -- integer value for time in seconds for how long the system should wait after completing a single run before starting another. Default: 21600s (6 hours)
+    block_sleep_duration -- integer value for time in seconds for how long the system should wait after completing a single run before starting another. Default: 86400s (24 hours)
 
     run_duration -- integer value for time in seconds for how long the system should run for. Default: -1s (endless)
 

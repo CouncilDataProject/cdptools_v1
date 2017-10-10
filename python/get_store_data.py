@@ -1336,6 +1336,7 @@ def combine_data_sources(feeds_store, tfidf_store, versioning_store, storage_dir
         print('combining data sources:')
         print('\t', feeds_store)
         print('\t', tfidf_store)
+        print('\t', versioning_store)
 
     # ensure path safety
     storage_directory = check_path_safety(storage_directory)
@@ -1405,6 +1406,7 @@ def combine_data_sources(feeds_store, tfidf_store, versioning_store, storage_dir
 
     if prints:
         print('stored combined data at: ' + result_file)
+        print('stored combined data at: ' + result_log_file)
         print('---------------------------------------------------------------')
 
     return combined_data

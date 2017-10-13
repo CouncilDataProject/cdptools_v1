@@ -1370,7 +1370,7 @@ def combine_data_sources(feeds_store, tfidf_store, versioning_store, storage_dir
     combined_data = dict()
     combined_data['events'] = dict()
     combined_data['events_tfidf'] = tfidf_data
-    combined_data['transcipt_versioning'] = versioning_data
+    combined_data['transcript_versioning'] = versioning_data
 
     # place each item from the feeds data into the matching combined_data location
     for item in feeds_data:

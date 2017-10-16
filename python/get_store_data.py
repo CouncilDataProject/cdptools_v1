@@ -827,7 +827,7 @@ def generate_transcript_from_audio_splits(audio_directory, transcripts_directory
     return transcript
 
 # generate_transcripts_for_directory for a directory of audio files
-def generate_transcripts_from_directory(audio_directory, transcripts_directory, transcript_naming_function=name_transcription, audio_splits_directory='splits/', delete_originals=False, delete_splits=False, prints=True):
+def generate_transcripts_from_directory(audio_directory, transcripts_directory, transcript_naming_function=name_transcription, audio_splits_directory='splits/', ignore_files=None, delete_originals=False, delete_splits=False, prints=True):
 
     '''Generate transcripts for all audio files in a directory.
 
@@ -859,6 +859,13 @@ def generate_transcripts_from_directory(audio_directory, transcripts_directory, 
     # after check, set the directory to match
     os.chdir(audio_directory)
 
+    ignore_files = list()
+
+    if ignore_files not None:
+        if os.path.exists(ignore_files):
+            with open(ignore_files, 'r') as ignore_files_file:
+                ignore_files = json.load(ignore_files_file)
+
     if prints:
         print('starting work for', audio_directory, '...')
         print('-------------------------------------------------------')
@@ -869,7 +876,7 @@ def generate_transcripts_from_directory(audio_directory, transcripts_directory, 
     for filename in os.listdir():
 
         # ensure file is valid for transcription process
-        if '.wav' in filename:
+        if ('.wav' in filename) and (filename not in ignore_files):
 
             # create audio splits and save the splits directory for use in processing transcript
             split_audio_dir = split_audio_into_parts(audio_directory=audio_directory, transcripts_directory=transcripts_directory, audio_file=filename, splits_directory=audio_splits_directory, delete_splits=delete_splits, prints=prints)
@@ -1411,6 +1418,35 @@ def combine_data_sources(feeds_store, tfidf_store, versioning_store, storage_dir
 
     return combined_data
 
+# try_catch_database_push a dataset to a database given safety constraints
+def try_catch_database_push(database_head, data, wait_after_fail=600, prints=True):
+
+    '''Push data to a database while ensuring safety and rerun
+
+    Arguments:
+
+    database_head -- the overall head of the database where all trees can be reached from.
+
+    data -- the data that will be stored.
+
+    wait_after_fail -- the time to wait before rerunning the data push if it was to fail. Default: 10 minutes (600 seconds)
+
+    prints -- boolean value to determine to show helpful print statements during the course of the run to indicate where the runner is at in the process. Default: True (show prints)
+    '''
+
+    try:
+        for key in data:
+            database_head.child(key).set(data[key])
+
+    except Exception as e:
+        if prints:
+            print('error in database push...', e)
+
+            if wait_after_fail >= 0:
+                print('retrying in', wait_after_fail, 'seconds')
+                time.sleep(wait_after_fail)
+                try_catch_database_push(database_head=database_head, data=data, wait_after_fail=(wait_after_fail + 60), prints=prints)
+
 # commit_to_firebase a combined_data store
 def commit_to_firebase(data_store, database_head, prints=True):
 
@@ -1433,8 +1469,7 @@ def commit_to_firebase(data_store, database_head, prints=True):
     with open(data_store, 'r') as data_file:
         data = json.load(data_file)
 
-    for key in data:
-        database_head.child(key).set(data[key])
+    try_catch_database_push(database_head=database_head, data=data, prints=prints)
 
     if prints:
         print('pushed and stored data at:', database_head)

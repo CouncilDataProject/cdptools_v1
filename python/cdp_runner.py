@@ -190,7 +190,7 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
             # @RUN
             # Run for mass transcripts
             transcripts_start = time.time()
-            block['completed_transcripts'] = generate_transcripts_from_directory(audio_directory=(project_directory + 'audio/'), transcripts_directory=(project_directory + 'transcripts/'), delete_splits=delete_splits, prints=prints)
+            block['completed_transcripts'] = generate_transcripts_from_directory(audio_directory=(project_directory + 'audio/'), transcripts_directory=(project_directory + 'transcripts/'), ignore_files='C:/Users/jmax825/Desktop/transcription_runner/python/ignore_files.json', delete_splits=delete_splits, prints=prints)
             transcripts_duration = time.time() - transcripts_start
 
             block['transcripts_duration'] = (float(transcripts_duration) / 60.0 / 60.0)

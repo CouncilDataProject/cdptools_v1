@@ -861,7 +861,7 @@ def generate_transcripts_from_directory(audio_directory, transcripts_directory, 
 
     ignore_files = list()
 
-    if ignore_files not None:
+    if ignore_files is not None:
         if os.path.exists(ignore_files):
             with open(ignore_files, 'r') as ignore_files_file:
                 ignore_files = json.load(ignore_files_file)

@@ -207,7 +207,7 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
             # Run for mass tfidf
             tfidf_start = time.time()
             if (type(prior_stored_data) is collections.OrderedDict) or (type(prior_stored_data) is dict):
-                generate_tfidf_from_directory(transcript_directory=(project_directory + 'transcripts/'), storage_directory=json_directory, stored_versions=prior_stored_data[relevant_tfidf_storage_key], prints=prints)
+                generate_tfidf_from_directory(transcript_directory=(project_directory + 'transcripts/'), storage_directory=json_directory, stored_versions=prior_stored_data, prints=prints)
             else:
                 generate_tfidf_from_directory(transcript_directory=(project_directory + 'transcripts/'), storage_directory=json_directory, stored_versions=None, prints=prints)
             tfidf_duration = time.time() - tfidf_start

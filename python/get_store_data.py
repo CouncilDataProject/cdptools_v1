@@ -859,8 +859,6 @@ def generate_transcripts_from_directory(audio_directory, transcripts_directory, 
     # after check, set the directory to match
     os.chdir(audio_directory)
 
-    ignore_files = list()
-
     if ignore_files is not None:
         if os.path.exists(ignore_files):
             with open(ignore_files, 'r') as ignore_files_file:

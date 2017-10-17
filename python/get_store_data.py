@@ -1160,12 +1160,11 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
                 print('completed file:', filename, '...')
                 print('---------------------------------------------------------------')
 
-    # add corpus results to total file results
-    results['corpus'] = float(transcript_counter)
-
     if prints:
         print('starting second pass word tfidf scoring')
         print('---------------------------------------------------------------')
+
+    cleaned_results = dict()
 
     # for each transcript construct a tfidf dictionary to hold completed computation
     for transcript, data in results['transcripts'].items():
@@ -1183,9 +1182,12 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
                 # print('transcript:', transcript, '\tword:', word, '\ttf score:', score, '\n\toccurances:', score['score'] * data['length'], '\tlength:', data['length'])
 
                 # actual computation
-                data['tfidf'][word] = float(score['score']) * math.log(results['corpus'] / float(results['words'][word]))
+                data['tfidf'][word] = float(score['score']) * math.log(transcript_counter / float(results['words'][word]))
 
         del data['tf']
+
+    for transcript, data in results['transcripts'].items():
+        cleaned_results[transcript] = data['tfidf']
 
     if prints:
         print('completed all files, storing and returning results for:', transcript_directory)
@@ -1196,7 +1198,7 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
 
     # completed all computation, dump into output file
     with open(storage_directory + 'tfidf.json', 'w') as outfile:
-        json.dump(results, outfile)
+        json.dump(cleaned_results, outfile)
 
     with open(storage_directory + 'events_versioning.json', 'w') as outfile:
         json.dump(versioning, outfile)
@@ -1206,7 +1208,7 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
     time.sleep(1)
 
     # return the final dictionary object
-    return results, versioning
+    return cleaned_results, versioning
 
 # predict_relevancy for a corpus of tfidf documents
 def predict_relevancy(search, tfidf_store, edit_distance=True, adjusted_distance_stop = 0.26, results=10):

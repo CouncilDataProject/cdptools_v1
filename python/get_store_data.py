@@ -1245,7 +1245,7 @@ def predict_relevancy(search, tfidf_store, edit_distance=True, adjusted_distance
     found_dict = dict()
 
     # for each search term, construct relevancy dictionaries
-    for transcript, data in tfidf_dict['transcripts'].items():
+    for transcript, data in tfidf_dict.items():
 
         correct_found = dict()
         similar_found = dict()
@@ -1257,7 +1257,7 @@ def predict_relevancy(search, tfidf_store, edit_distance=True, adjusted_distance
             similar_chain_find = 0
 
             # for each word and it's score
-            for stored_word, score in data['tfidf'].items():
+            for stored_word, score in data.items():
 
                 # if the word direct matches the search term
                 if stored_word == search_word:

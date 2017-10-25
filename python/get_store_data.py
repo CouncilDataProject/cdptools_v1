@@ -1316,7 +1316,7 @@ def predict_relevancy(search, tfidf_store, edit_distance=True, adjusted_distance
 # PULLING
 
 # get_firebase_data for a given database head
-def get_firebase_data(database_head):
+def get_firebase_data(db_root, path):
 
     '''Pull all data from a database point.
 
@@ -1326,7 +1326,7 @@ def get_firebase_data(database_head):
         example: pyrebase object for 'firebase/transcript_versioning/'
     '''
 
-    return database_head.get()
+    return db_root.child(path).get()
 
 # COMBINING AND STORING
 
@@ -1429,7 +1429,7 @@ def combine_data_sources(feeds_store, tfidf_store, versioning_store, storage_dir
     return combined_data
 
 # try_catch_database_push a dataset to a database given safety constraints
-def try_catch_database_push(database_head, data, wait_after_fail=600, prints=True):
+def try_catch_database_push(db_root, data, wait_after_fail=600, prints=True):
 
     '''Push data to a database while ensuring safety and rerun
 
@@ -1446,7 +1446,7 @@ def try_catch_database_push(database_head, data, wait_after_fail=600, prints=Tru
 
     try:
         for key in data:
-            database_head.child(key).set(data[key])
+            db_root.child(key).set(data[key])
 
     except Exception as e:
         if prints:
@@ -1455,10 +1455,10 @@ def try_catch_database_push(database_head, data, wait_after_fail=600, prints=Tru
             if wait_after_fail >= 0:
                 print('retrying in', wait_after_fail, 'seconds')
                 time.sleep(wait_after_fail)
-                try_catch_database_push(database_head=database_head, data=data, wait_after_fail=(wait_after_fail + 60), prints=prints)
+                try_catch_database_push(db_root=db_root, data=data, wait_after_fail=(wait_after_fail + 60), prints=prints)
 
 # commit_to_firebase a combined_data store
-def commit_to_firebase(data_store, database_head, prints=True):
+def commit_to_firebase(data_store, db_root, prints=True):
 
     '''Push a combined data JSON file to firebase.
 
@@ -1479,7 +1479,7 @@ def commit_to_firebase(data_store, database_head, prints=True):
     with open(data_store, 'r') as data_file:
         data = json.load(data_file)
 
-    try_catch_database_push(database_head=database_head, data=data, prints=prints)
+    try_catch_database_push(db_root=db_root, data=data, prints=prints)
 
     if prints:
         print('pushed and stored data at:', database_head)

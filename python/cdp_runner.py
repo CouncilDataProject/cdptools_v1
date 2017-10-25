@@ -88,7 +88,7 @@ def generate_log_file(log_name, log_type, log_object, log_directory):
     time.sleep(1)
 
 # run_cdp function used to collect, transcribe, and store videos
-def run_cdp(project_directory, json_directory, log_directory, video_routes, scraping_function, pull_from_database, database_head, versioning_head, relevant_tfidf_storage_key, commit_to_database, delete_videos=False, delete_splits=False, test_search_term='bicycle infrastructure', prints=True, block_sleep_duration=1800, run_duration=-1, logging=True):
+def run_cdp(project_directory, json_directory, log_directory, video_routes, scraping_function, pull_from_database, database_head, versioning_path, relevant_tfidf_storage_key, commit_to_database, delete_videos=False, delete_splits=False, test_search_term='bicycle infrastructure', prints=True, block_sleep_duration=900, run_duration=-1, logging=True):
 
     '''Run the backend transcription, local, and database storage system.
 
@@ -120,6 +120,8 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
 
     database_head -- the part/ path of the database you would like to pull from and store with.
 
+    versioning_path -- the path to where versioning data is stored in the database.
+
     relevant_tfidf_storage_key -- the key/ path for navigating the database information to retrieve specifically the tfidf information.
 
     commit_to_database -- the function used to push data from the local JSON storage to a database.
@@ -133,7 +135,7 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
 
     prints -- boolean value to determine to show helpful print statements during the course of the run to indicate where the runner is at in the process. Default: True (show prints)
 
-    block_sleep_duration -- integer value for time in seconds for how long the system should wait after checking for need videos. Default: 1800 (0.5 hours)
+    block_sleep_duration -- integer value for time in seconds for how long the system should wait after checking for need videos. Default: 900 (0.25 hours)
 
     run_duration -- integer value for time in seconds for how long the system should run for. Default: -1s (endless)
 
@@ -155,7 +157,7 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
         blocks = list()
 
         # check to see if the runner should continue
-        while (time_elapsed + block_sleep_duration) <= run_duration or run_duration == -1:
+        while (((time_elapsed + block_sleep_duration) <= run_duration) or run_duration == -1):
 
             # create block logging information
             block_start = time.time()
@@ -163,124 +165,124 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
             block['system_start'] = system_start
             block['block_start'] = block_start
 
-            # # @RUN
-            # # Run for video feeds
-            # feeds_start = time.time()
-            # noNewFeedsAvailable = True
-            # block['completed_feeds'] = 0
+            # @RUN
+            # Run for video feeds
+            feeds_start = time.time()
+            noNewFeedsAvailable = True
+            checkCounter = 0
+            block['completed_feeds'] = 0
 
-            # while (noNewFeedsAvailable):
-            #     feed_results = get_video_feeds(packed_routes=video_routes, storage_directory=json_directory, scraping_function=scraping_function, prints=prints)
+            while (noNewFeedsAvailable and (checkCounter < 12)):
+                feed_results = get_video_feeds(packed_routes=video_routes, storage_directory=json_directory, scraping_function=scraping_function, prints=prints)
 
-            #     block['completed_feeds'] = len(feed_results['feeds'])
-            #     noNewFeedsAvailable = not feed_results['difference']
+                block['completed_feeds'] = len(feed_results['feeds'])
+                noNewFeedsAvailable = not feed_results['difference']
 
-            #     time_elapsed = time.time() - system_start
+                time_elapsed = time.time() - system_start
 
-            #     # sleep the system if it wont overflow into system downtime
-            #     if (((time_elapsed + block_sleep_duration) <= run_duration) or (run_duration == -1) or (feed_results['difference'])):
-            #         print('Collecting feeds again in:', (float(block_sleep_duration) / 60.0 / 60.0), 'HOURS...')
-            #         time.sleep(block_sleep_duration)
+                # sleep the system if it wont overflow into system downtime
+                if (((time_elapsed + block_sleep_duration) <= run_duration) or (run_duration == -1) or (feed_results['difference'])):
+                    print('Collecting feeds again in:', (float(block_sleep_duration) / 60.0 / 60.0), 'HOURS...')
+                    time.sleep(block_sleep_duration)
 
-            # feeds_duration = time.time() - feeds_start
-            # block['feeds_duration'] = (float(feeds_duration) / 60.0 / 60.0)
+                checkCounter += 1
 
-            # # @RUN
-            # # Run for mass video collection
-            # videos_start = time.time()
-            # block['completed_videos'] = get_video_sources(objects_file=(json_directory + 'video_feeds.json'), storage_directory=(project_directory + 'video/'), throughput_directory=(project_directory + 'audio/'), prints=prints)
-            # videos_duration = time.time() - videos_start
+            feeds_duration = time.time() - feeds_start
+            block['feeds_duration'] = (float(feeds_duration) / 60.0 / 60.0)
 
-            # block['videos_duration'] = (float(videos_duration) / 60.0 / 60.0)
+            # @RUN
+            # Run for mass video collection
+            videos_start = time.time()
+            block['completed_videos'] = get_video_sources(objects_file=(json_directory + 'video_feeds.json'), storage_directory=(project_directory + 'video/'), throughput_directory=(project_directory + 'audio/'), prints=prints)
+            videos_duration = time.time() - videos_start
 
-            # # @RUN
-            # # Run for mass audio stripping
-            # audios_start = time.time()
-            # block['completed_audios'] = strip_audio_from_directory(video_directory=(project_directory + 'video/'), audio_directory=(project_directory + 'audio/'), delete_videos=delete_videos, prints=prints)
-            # audios_duration = time.time() - audios_start
+            block['videos_duration'] = (float(videos_duration) / 60.0 / 60.0)
 
-            # block['audios_duration'] = (float(audios_duration) / 60.0 / 60.0)
+            # @RUN
+            # Run for mass audio stripping
+            audios_start = time.time()
+            block['completed_audios'] = strip_audio_from_directory(video_directory=(project_directory + 'video/'), audio_directory=(project_directory + 'audio/'), delete_videos=delete_videos, prints=prints)
+            audios_duration = time.time() - audios_start
 
-            # # @RUN
-            # # Run for mass transcripts
-            # transcripts_start = time.time()
-            # block['completed_transcripts'] = generate_transcripts_from_directory(audio_directory=(project_directory + 'audio/'), transcripts_directory=(project_directory + 'transcripts/'), ignore_files='C:/Users/jmax825/Desktop/transcription_runner/python/ignore_files.json', delete_splits=delete_splits, prints=prints)
-            # transcripts_duration = time.time() - transcripts_start
+            block['audios_duration'] = (float(audios_duration) / 60.0 / 60.0)
 
-            # block['transcripts_duration'] = (float(transcripts_duration) / 60.0 / 60.0)
+            # @RUN
+            # Run for mass transcripts
+            transcripts_start = time.time()
+            block['completed_transcripts'] = generate_transcripts_from_directory(audio_directory=(project_directory + 'audio/'), transcripts_directory=(project_directory + 'transcripts/'), ignore_files='C:/Users/jmax825/Desktop/transcription_runner/python/ignore_files.json', delete_splits=delete_splits, prints=prints)
+            transcripts_duration = time.time() - transcripts_start
+
+            block['transcripts_duration'] = (float(transcripts_duration) / 60.0 / 60.0)
 
             # @RUN
             # Run for tfidf saftey
             data_pull_start = time.time()
-            prior_stored_data = pull_from_database(database_head=versioning_head)
+            prior_stored_data = pull_from_database(db_root=firebase_head, path=versioning_path)
             data_pull_duration = time.time() - data_pull_start
 
             block['data_pull_duration'] = (float(data_pull_duration) / 60.0 / 60.0)
 
-            for transcript in prior_stored_data.each():
-                print(transcript.key())
+            # @RUN
+            # Run for mass tfidf
+            tfidf_start = time.time()
+            if (type(prior_stored_data) is collections.OrderedDict) or (type(prior_stored_data) is dict):
+                generate_tfidf_from_directory(transcript_directory=(project_directory + 'transcripts/'), storage_directory=json_directory, stored_versions=prior_stored_data, prints=prints)
+            else:
+                generate_tfidf_from_directory(transcript_directory=(project_directory + 'transcripts/'), storage_directory=json_directory, stored_versions=None, prints=prints)
+            tfidf_duration = time.time() - tfidf_start
 
-            # # @RUN
-            # # Run for mass tfidf
-            # tfidf_start = time.time()
-            # if (type(prior_stored_data) is collections.OrderedDict) or (type(prior_stored_data) is dict):
-            #     generate_tfidf_from_directory(transcript_directory=(project_directory + 'transcripts/'), storage_directory=json_directory, stored_versions=prior_stored_data, prints=prints)
-            # else:
-            #     generate_tfidf_from_directory(transcript_directory=(project_directory + 'transcripts/'), storage_directory=json_directory, stored_versions=None, prints=prints)
-            # tfidf_duration = time.time() - tfidf_start
+            block['tfidf_duration'] = (float(tfidf_duration) / 60.0 / 60.0)
 
-            # block['tfidf_duration'] = (float(tfidf_duration) / 60.0 / 60.0)
+            # @RUN
+            # Run for testing speed of search
+            search_start = time.time()
+            if prints:
+                pprint(predict_relevancy(search=test_search_term, tfidf_store=(json_directory + 'tfidf.json')))
+            else:
+                predict_relevancy(search=test_search_term, tfidf_store=(json_directory + 'tfidf.json'))
 
-        #     # @RUN
-        #     # Run for testing speed of search
-        #     search_start = time.time()
-        #     if prints:
-        #         pprint(predict_relevancy(search=test_search_term, tfidf_store=(json_directory + 'tfidf.json')))
-        #     else:
-        #         predict_relevancy(search=test_search_term, tfidf_store=(json_directory + 'tfidf.json'))
+            print('-------------------------------------------------------')
+            search_duration = time.time() - search_start
 
-        #     print('-------------------------------------------------------')
-        #     search_duration = time.time() - search_start
+            block['search_duration'] = (float(search_duration) / 60.0 / 60.0)
 
-        #     block['search_duration'] = (float(search_duration) / 60.0 / 60.0)
+            # @RUN
+            # Run for data combination
+            combination_start = time.time()
+            combine_data_sources(feeds_store=(json_directory + 'video_feeds.json'), tfidf_store=(json_directory + 'tfidf.json'), versioning_store=(json_directory + 'events_versioning.json'), storage_directory=json_directory, prints=prints)
+            combination_duration = time.time() - combination_start
 
-        #     # @RUN
-        #     # Run for data combination
-        #     combination_start = time.time()
-        #     combine_data_sources(feeds_store=(json_directory + 'video_feeds.json'), tfidf_store=(json_directory + 'tfidf.json'), versioning_store=(json_directory + 'events_versioning.json'), storage_directory=json_directory, prints=prints)
-        #     combination_duration = time.time() - combination_start
+            block['combination_duration'] = (float(combination_duration) / 60.0 / 60.0)
 
-        #     block['combination_duration'] = (float(combination_duration) / 60.0 / 60.0)
+            # @RUN
+            # Run for database storage
+            database_start = time.time()
+            commit_to_database(data_store=(json_directory + 'combined_data.json'), db_root=database_head, prints=prints)
+            database_duration = time.time() - database_start
 
-        #     # @RUN
-        #     # Run for database storage
-        #     database_start = time.time()
-        #     commit_to_database(data_store=(json_directory + 'combined_data.json'), database_head=database_head, prints=prints)
-        #     database_duration = time.time() - database_start
+            block['database_duration'] = (float(database_duration) / 60.0 / 60.0)
 
-        #     block['database_duration'] = (float(database_duration) / 60.0 / 60.0)
+            block_duration = time.time() - block_start
+            block['block_duration'] = block_duration
 
-        #     block_duration = time.time() - block_start
-        #     block['block_duration'] = block_duration
+            time_elapsed = time.time() - system_start
+            block['system_runtime'] = time_elapsed
 
-        #     time_elapsed = time.time() - system_start
-        #     block['system_runtime'] = time_elapsed
+            # check logging to log the block information
+            if logging:
+                log_name = 'block_' + str(datetime.datetime.fromtimestamp(block_start)).replace(' ', '_').replace(':', '-')[:-7]
+                generate_log_file(log_name=log_name, log_type='block', log_object=block, log_directory=log_directory)
 
-        #     # check logging to log the block information
-        #     if logging:
-        #         log_name = 'block_' + str(datetime.datetime.fromtimestamp(block_start)).replace(' ', '_').replace(':', '-')[:-7]
-        #         generate_log_file(log_name=log_name, log_type='block', log_object=block, log_directory=log_directory)
+            # append the block to system log
+            blocks.append(block)
 
-        #     # append the block to system log
-        #     blocks.append(block)
+        # check logging to log the system information
+        if logging:
+            log_name = 'system_' + str(datetime.datetime.fromtimestamp(system_start)).replace(' ', '_').replace(':', '-')[:-7]
+            generate_log_file(log_name=log_name, log_type='system', log_object=blocks, log_directory=log_directory)
 
-        # # check logging to log the system information
-        # if logging:
-        #     log_name = 'system_' + str(datetime.datetime.fromtimestamp(system_start)).replace(' ', '_').replace(':', '-')[:-7]
-        #     generate_log_file(log_name=log_name, log_type='system', log_object=blocks, log_directory=log_directory)
-
-        # # return the basic block information
-        # return blocks
+        # return the basic block information
+        return blocks
 
     # print any exception that occurs and stop the run
     except Exception as e:
@@ -318,16 +320,22 @@ video_routes = {
 
 # database configuration and admin settings
 # where I store my firebase (pyrebase) configuration and api keys
-from configure_keys import *
 
 # using the configure_keys information, initialize the pyrebase connection
-import pyrebase
-firebase = pyrebase.initialize_app(pyrebase_config)
-pyrebase_head = firebase.database()
-pyrebase_versioning = pyrebase_head.child('transcript_versioning')
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+
+cred = credentials.Certificate('D:/transcription_runner/python/cdp-sea-firebase-adminsdk.json')
+firebase_admin.initialize_app(cred, {
+    'databaseURL' : 'https://cdp-sea.firebaseio.com/'
+})
+
+firebase_head = db.reference()
+versioning_path = 'transcript_versioning/'
 
 # the project directory where all files will be stored
 project_directory = 'C:/Users/jmax825/Desktop/transcription_runner/resources/'
 
 # actual runner function call
-run_cdp(project_directory=project_directory, json_directory=(project_directory + 'stores/'), video_routes=video_routes, scraping_function=scrape_seattle_channel, log_directory=(project_directory + 'logs/'), pull_from_database=get_firebase_data, database_head=pyrebase_head, versioning_head=pyrebase_versioning, relevant_tfidf_storage_key='events_tfidf', commit_to_database=commit_to_firebase, delete_videos=True, delete_splits=True)
+run_cdp(project_directory=project_directory, json_directory=(project_directory + 'stores/'), video_routes=video_routes, scraping_function=scrape_seattle_channel, log_directory=(project_directory + 'logs/'), pull_from_database=get_firebase_data, database_head=firebase_head, versioning_path=versioning_path, relevant_tfidf_storage_key='events_tfidf', commit_to_database=commit_to_firebase, delete_videos=True, delete_splits=True)

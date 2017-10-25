@@ -3,3 +3,4 @@ firebase_credentials.json
 __pycache__
 resources
 testing.py
+cdp-sea-firebase-adminsdk.json

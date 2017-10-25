@@ -310,6 +310,8 @@ def get_video_feeds(packed_routes, storage_directory, scraping_function=scrape_s
     # create empty list to store video information
     constructed_feeds = list()
 
+    feed_difference = False
+
     # for each path and packed_route
     for path, routes in packed_routes.items():
         if prints:
@@ -336,8 +338,10 @@ def get_video_feeds(packed_routes, storage_directory, scraping_function=scrape_s
         # load the store data
         previous_feeds = json.loads(temp)
 
+        previous_length = len(previous_feeds)
+
         if prints:
-            print('previous store length:\t', len(previous_feeds))
+            print('previous store length:\t', previous_length)
 
         previous_videos = list()
 
@@ -353,12 +357,16 @@ def get_video_feeds(packed_routes, storage_directory, scraping_function=scrape_s
         if prints:
             print('new store length:\t', len(previous_feeds))
 
+        feed_difference = (previous_length != len(previous_feeds))
+
         # set the new feeds appended to old
         constructed_feeds = previous_feeds
 
     # no previous store found, create new
     except Exception as e:
         print(e)
+
+        feed_difference = True
 
         if prints:
             print('no previous storage found...')
@@ -374,7 +382,9 @@ def get_video_feeds(packed_routes, storage_directory, scraping_function=scrape_s
     time.sleep(2)
 
     # return the data for manipulation
-    return constructed_feeds
+    returnObject = {'feeds': constructed_feeds, 'difference': feed_difference}
+
+    return returnObject
 
 # get_video_sources for a json/ dictionary of video information
 def get_video_sources(objects_file, storage_directory, throughput_directory, prints=True):
@@ -1086,21 +1096,21 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
     if (type(stored_versions) is collections.OrderedDict) or (type(stored_versions) is dict):
 
         # for each transcript in the previously stored data complete rewrite process if needed
-        for key in stored_versions:
+        for transcript in stored_versions:
 
             # check for versions created not by this process
-            versions = stored_versions[key]
-            versioning[key] = versions
+            versions = stored_versions[transcript]
+            versioning[transcript] = versions
             most_recent = len(versions) - 1
 
             # if the most recent version was not created by this process, rewrite the transcript file for backup and tfidf processing
             if most_recent != 0:
 
                 # remove original
-                os.remove(transcript_directory + key + '.txt')
+                os.remove(transcript_directory + transcript + '.txt')
 
                 # actual rewrite
-                with open(transcript_directory + key + '.txt', 'w', encoding='utf-8') as outfile:
+                with open(transcript_directory + transcript + '.txt', 'w', encoding='utf-8') as outfile:
                     outfile.write(versions[most_recent]['full_text'])
 
                 # file safety
@@ -1108,7 +1118,7 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
                 time.sleep(1)
 
                 if prints:
-                    print('rewrote file:', transcript_directory + key + '.txt')
+                    print('rewrote file:', transcript_directory + transcript + '.txt')
                     print('\tusing text:', versions[most_recent]['full_text'][:20])
 
     # initialize results dictionaries
@@ -1316,7 +1326,7 @@ def get_firebase_data(database_head):
         example: pyrebase object for 'firebase/transcript_versioning/'
     '''
 
-    return database_head.get().val()
+    return database_head.get()
 
 # COMBINING AND STORING
 

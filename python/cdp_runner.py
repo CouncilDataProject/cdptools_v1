@@ -217,7 +217,7 @@ def transcription_runner(project_directory, json_directory, log_directory, video
             # @RUN
             # Run for tfidf saftey
             data_pull_start = time.time()
-            prior_stored_data = pull_from_database(db_root=firebase_head, path=versioning_path)
+            prior_stored_data = pull_from_database(db_root=database_head, path=versioning_path)
             data_pull_duration = time.time() - data_pull_start
 
             block['data_pull_duration'] = (float(data_pull_duration) / 60.0 / 60.0)

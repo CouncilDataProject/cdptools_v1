@@ -88,7 +88,7 @@ def generate_log_file(log_name, log_type, log_object, log_directory):
     time.sleep(1)
 
 # run_cdp function used to collect, transcribe, and store videos
-def run_cdp(project_directory, json_directory, log_directory, video_routes, scraping_function, pull_from_database, database_head, versioning_path, relevant_tfidf_storage_key, commit_to_database, delete_videos=False, delete_splits=False, test_search_term='bicycle infrastructure', prints=True, block_sleep_duration=900, run_duration=-1, logging=True):
+def transcription_runner(project_directory, json_directory, log_directory, video_routes, scraping_function, pull_from_database, database_head, versioning_path, relevant_tfidf_storage_key, commit_to_database, delete_videos=False, delete_splits=False, test_search_term='bicycle infrastructure', prints=True, block_sleep_duration=900, run_duration=-1, logging=True):
 
     '''Run the backend transcription, local, and database storage system.
 
@@ -181,8 +181,8 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
                 time_elapsed = time.time() - system_start
 
                 # sleep the system if it wont overflow into system downtime
-                if (((time_elapsed + block_sleep_duration) <= run_duration) or (run_duration == -1) or (feed_results['difference'])):
-                    print('Collecting feeds again in:', (float(block_sleep_duration) / 60.0 / 60.0), 'HOURS...')
+                if (noNewFeedsAvailable):
+                    print('collecting feeds again in:', (float(block_sleep_duration) / 60.0 / 60.0), 'HOURS...')
                     time.sleep(block_sleep_duration)
 
                 checkCounter += 1
@@ -290,52 +290,3 @@ def run_cdp(project_directory, json_directory, log_directory, video_routes, scra
         print('---------------------- ENCOUNTERED ERROR ----------------------')
         print('---------------------------------------------------------------')
         return traceback.print_exc()
-
-# VARIABLES AND OBJECTS
-
-# video_routes is the seattle_channel packed_routes object
-# change this to your own video routing
-video_routes = {
-                'briefings': ['http://www.seattlechannel.org/CouncilBriefings', 'Council Briefing'],
-                'budget': ['http://www.seattlechannel.org/BudgetCommittee', 'Select Budget Committee'],
-                'full': ['http://www.seattlechannel.org/FullCouncil', 'Full Council'],
-                'park': ['http://www.seattlechannel.org/mayor-and-council/city-council/seattle-park-district-board', 'Select Committee on Parks Funding'],
-                'transportation': ['http://www.seattlechannel.org/mayor-and-council/city-council/seattle-transportation-benefit-district', 'Select Committee on Transportation Funding'],
-                'arenas': ['http://www.seattlechannel.org/mayor-and-council/city-council/select-committee-on-civic-arenas', 'Select Committee on Civic Arenas'],
-                'housing': ['http://www.seattlechannel.org/mayor-and-council/city-council/select-committee-on-the-2016-seattle-housing-levy', 'Select Committee on the 2016 Seattle Housing Levy'],
-                'lighting': ['http://www.seattlechannel.org/mayor-and-council/city-council/select-committee-on-the-2016-seattle-city-light-strategic-planning', 'Select Committee on the 2016 Seattle City Light Strategic Planning'],
-                'finance': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-affordable-housing-neighborhoods-and-finance-committee', 'Affordable Housing, Neighborhoods, and Finance Committee'],
-                'utilities': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-civil-rights-utilities-economic-development-and-arts-committee', 'Civil Rights, Utilities, Economic Development, and Arts Committee'],
-                'education': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-education-equity-and-governance-committee', 'Education and Governance Committee'],
-                'energy': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-energy-and-environment-committee', 'Energy and Environment Committee'],
-                'communities': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-gender-equity-safe-communities-and-new-americans-committee', 'Gender Equity, Safe Communities, and New Americans Committee'],
-                'public_health': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-human-services-and-public-health-committee', 'Human Services and Public Health Committee'],
-                'civic_centers': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-parks-seattle-center-libraries-and-waterfront-committee', 'Parks, Seattle Center, Libraries, and Waterfront Committee'],
-                'zoning': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-planning-land-use-and-zoning-committee', 'Planning, Land Use, and Zoning Committee'],
-                'sustainability': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-sustainability-and-transportation-committee', 'Sustainability and Transportation Committee']
-}
-
-
-# DATABASE CONNECTION
-
-# database configuration and admin settings
-# where I store my firebase (pyrebase) configuration and api keys
-
-# using the configure_keys information, initialize the pyrebase connection
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
-
-cred = credentials.Certificate('D:/transcription_runner/python/cdp-sea-firebase-adminsdk.json')
-firebase_admin.initialize_app(cred, {
-    'databaseURL' : 'https://cdp-sea.firebaseio.com/'
-})
-
-firebase_head = db.reference()
-versioning_path = 'transcript_versioning/'
-
-# the project directory where all files will be stored
-project_directory = 'C:/Users/jmax825/Desktop/transcription_runner/resources/'
-
-# actual runner function call
-run_cdp(project_directory=project_directory, json_directory=(project_directory + 'stores/'), video_routes=video_routes, scraping_function=scrape_seattle_channel, log_directory=(project_directory + 'logs/'), pull_from_database=get_firebase_data, database_head=firebase_head, versioning_path=versioning_path, relevant_tfidf_storage_key='events_tfidf', commit_to_database=commit_to_firebase, delete_videos=True, delete_splits=True)

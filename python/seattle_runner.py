@@ -117,8 +117,8 @@ def scrape_seattle_channel(path, routes, prints=True):
         # append this feed to list of feeds
         path_feeds.append(path_feed)
 
-        if prints:
-            print('constructed true link:', path_feed['naming'])
+        # if prints:
+        #     print('constructed true link:', path_feed['naming'])
 
     if prints:
         print('completed feed construction for:', path)
@@ -249,5 +249,7 @@ versioning_path = 'transcript_versioning/'
 # the project directory where all files will be stored
 project_directory = 'C:/transcription_runner/resources/'
 
+ignore_files_path = 'C:/transcription_runner/python/ignore_files.json'
+
 # actual runner function call
-transcription_runner(project_directory=project_directory, json_directory=(project_directory + 'stores/'), video_routes=video_routes, scraping_function=scrape_seattle_channel, log_directory=(project_directory + 'logs/'), pull_from_database=get_firebase_data, database_head=firebase_head, versioning_path=versioning_path, relevant_tfidf_storage_key='events_tfidf', commit_to_database=commit_to_firebase, delete_videos=True, delete_splits=True)
+transcription_runner(project_directory=project_directory, json_directory=(project_directory + 'stores/'), video_routes=video_routes, scraping_function=scrape_seattle_channel, log_directory=(project_directory + 'logs/'), pull_from_database=get_firebase_data, database_head=firebase_head, versioning_path=versioning_path, relevant_tfidf_storage_key='events_tfidf', ignore_files_path=ignore_files_path, commit_to_database=commit_to_firebase, delete_videos=True, delete_splits=True)

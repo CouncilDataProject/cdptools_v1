@@ -5,3 +5,4 @@ resources
 testing.py
 cdp-sea-firebase-adminsdk.json
 ignore_files.json
+cleaning.py

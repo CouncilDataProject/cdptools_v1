@@ -469,7 +469,7 @@ def strip_audio_from_directory(video_directory, audio_directory, audio_directory
         except FileNotFoundError as e:
 
             if prints:
-                print('File already removed')
+                print('file already removed')
 
     if prints:
         print('completed audio stripping for:', video_directory)

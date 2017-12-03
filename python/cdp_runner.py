@@ -124,6 +124,8 @@ def transcription_runner(project_directory, json_directory, log_directory, video
 
     relevant_tfidf_storage_key -- the key/ path for navigating the database information to retrieve specifically the tfidf information.
 
+    ignore_files_path -- the os file path to a json file containing an array of ignorable file names
+
     commit_to_database -- the function used to push data from the local JSON storage to a database.
         example function: commit_to_firebase in get_store_data.py
 

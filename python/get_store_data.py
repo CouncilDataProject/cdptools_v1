@@ -1000,7 +1000,7 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
 
                 if prints:
                     print('rewrote file:', transcript_directory + transcript + '.txt')
-                    print('\tusing text:', versions[most_recent]['full_text'][:20])
+                    # print('\tusing text:', versions[most_recent]['full_text'][:20])
 
     # initialize results dictionaries
     results = dict()

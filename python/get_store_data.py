@@ -901,28 +901,30 @@ def generate_words_from_doc(document, filename, versioning, prints=True):
         word = word.replace('.', ' point ')
         word = word.lower()
 
-        # try adding to the word counter
-        try:
-            results['tf'][word]['count'] += 1
+        if len(word) > 0:
 
-        # must not have been initialized yet
-        except:
+            # try adding to the word counter
+            try:
+                results['tf'][word]['count'] += 1
 
-            # construct the synonyms list
-            synonym_add_list = list()
+            # must not have been initialized yet
+            except:
 
-            # construct the nearby words list
-            nearby_words_list = list()
+                # construct the synonyms list
+                # synonym_add_list = list()
 
-            # to_check_synonyms = dictionary.synonym(word)
-            #
-            # if type(to_check_synonyms) is list:
-            #     for synonym in dictionary.synonym(word):
-            #         if ' ' not in synonym_add_list:
-            #             synonym_add_list.append(synonym)
+                # construct the nearby words list
+                # nearby_words_list = list()
 
-            # initialize the word counter and add the synonyms
-            results['tf'][word] = {'count': 1, 'synonyms': synonym_add_list, 'nearby_words': nearby_words_list}
+                # to_check_synonyms = dictionary.synonym(word)
+                #
+                # if type(to_check_synonyms) is list:
+                #     for synonym in dictionary.synonym(word):
+                #         if ' ' not in synonym_add_list:
+                #             synonym_add_list.append(synonym)
+
+                # initialize the word counter and add the synonyms
+                results['tf'][word] = {'count': 1}
 
     # store the word length of the transcription
     results['length'] = float(len(words))

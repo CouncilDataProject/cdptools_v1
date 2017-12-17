@@ -56,8 +56,8 @@ def scrape_seattle_channel(path, routes, prints=True):
     path_feeds = list()
     paginations = soup.find_all('div', class_='col-xs-12 col-sm-8 col-md-9')
 
-    if prints:
-        print('found', len(paginations), 'video elements for:', path)
+    # if prints:
+    #     print('found', len(paginations), 'video elements for:', path)
 
     # for each video section find and store the video information
     for pagination in paginations:
@@ -120,9 +120,9 @@ def scrape_seattle_channel(path, routes, prints=True):
         # if prints:
         #     print('constructed true link:', path_feed['naming'])
 
-    if prints:
-        print('completed feed construction for:', path)
-        print('-----------------------------------------------------------')
+    # if prints:
+    #     print('completed feed construction for:', path)
+    #     print('-----------------------------------------------------------')
 
     return path_feeds
 

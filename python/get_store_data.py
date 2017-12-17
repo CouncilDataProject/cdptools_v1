@@ -196,11 +196,14 @@ def get_video_feeds(packed_routes, storage_directory, scraping_function, prints=
     # for each path and packed_route
     for path, routes in packed_routes.items():
         if prints:
-            print('starting work on:', path)
+            print('collecting feeds for:\t', path)
 
         # attach the found feeds to the storage list
         for item in scraping_function(path=clean_video_filename(path), routes=routes, prints=prints):
             constructed_feeds.append(item)
+
+    if prints:
+        print('----------------------------------------------------------------------------------------')
 
     # store the found feeds locally
     previous_feeds = list()
@@ -237,6 +240,7 @@ def get_video_feeds(packed_routes, storage_directory, scraping_function, prints=
 
         if prints:
             print('new store length:\t', len(previous_feeds))
+            print('----------------------------------------------------------------------------------------')
 
         feed_difference = (previous_length != len(previous_feeds))
 
@@ -304,6 +308,8 @@ def get_video_sources(objects_file, storage_directory, throughput_directory, pri
 
     completed_stores = 0
 
+    prior_check_dict = {'prior audio': 0, 'prior video': 0, 'collected': 0}
+
     # for each dictionary in list of data
     for datum in objects:
 
@@ -315,15 +321,19 @@ def get_video_sources(objects_file, storage_directory, throughput_directory, pri
 
                 # check it the video exists
                 if os.path.exists(throughput_directory + datum['naming'] + '.wav'):
-                    if prints:
-                        print('audio stored previously, skipping', datum['video'], 'collection...')
+                    prior_check_dict['prior audio'] += 1
+                    # if prints:
+                    #     print('audio stored previously, skipping', datum['video'], 'collection...')
 
                 elif os.path.exists(storage_directory + datum['naming'] + '.mp4'):
-                    if prints:
-                        print('video stored previously, skipping', datum['video'], 'collection...')
+                    prior_check_dict['prior video'] += 1
+                    # if prints:
+                    #     print('video stored previously, skipping', datum['video'], 'collection...')
 
                 # video must need to be downloaded
                 else:
+                    prior_check_dict['collected'] += 1
+
                     if prints:
                         print('collecting:', datum['video'])
 
@@ -346,7 +356,8 @@ def get_video_sources(objects_file, storage_directory, throughput_directory, pri
 
     if prints:
         print('completed all video collections')
-        print('----------------------------------------------------------------------')
+        print(prior_check_dict)
+        print('----------------------------------------------------------------------------------------')
 
     return completed_stores
 
@@ -473,7 +484,7 @@ def strip_audio_from_directory(video_directory, audio_directory, audio_directory
 
     if prints:
         print('completed audio stripping for:', video_directory)
-        print('---------------------------------------------------------------')
+        print('----------------------------------------------------------------------------------------')
 
     return completed_strips
 
@@ -550,13 +561,10 @@ def split_audio_into_parts(audio_directory, transcripts_directory, audio_file, n
     # if the transcript exists already, no need to create splits unless directly overriden
     if os.path.exists(transcripts_directory + audio_file[:-4] + '.txt') and delete_splits:
 
-        if prints:
-            print('transcript exists, and delete_splits marked true, no need to create splits...')
+        # if prints:
+        #     print('transcript exists, and delete_splits marked true, no need to create splits...')
 
         return store_directory
-
-    if prints:
-        print('creating audio splits for:\t', audio_directory + audio_file)
 
     # check if the splits already exist
     if os.path.exists(store_directory):
@@ -566,6 +574,9 @@ def split_audio_into_parts(audio_directory, transcripts_directory, audio_file, n
 
         # they existed, return the store_directory path
         return store_directory
+
+    if prints:
+        print('creating audio splits for:\t', audio_directory + audio_file)
 
     # create an AudioSegment from full audio file
     audio_as_segment = AudioSegment.from_wav(audio_directory + audio_file)
@@ -641,7 +652,7 @@ def generate_transcript_from_audio_splits(audio_directory, transcripts_directory
 
     # check if the transcription already exists
     if os.path.exists(transcribed_name):
-        print('transcript for:\t', transcribed_name, 'already exists...')
+        # print('transcript for:\t', transcribed_name, 'already exists...')
         return 'existed, not opened'
 
     if prints:
@@ -757,7 +768,7 @@ def generate_transcripts_from_directory(audio_directory, transcripts_directory, 
 
     if prints:
         print('starting work for', audio_directory, '...')
-        print('-------------------------------------------------------')
+        print('----------------------------------------------------------------------------------------')
 
     completed_transcripts = 0
 
@@ -792,10 +803,10 @@ def generate_transcripts_from_directory(audio_directory, transcripts_directory, 
 
                 # files don't exist because previous transcription creation
                 except FileNotFoundError as e:
-
+                    pass
                     # files were previously deleted
-                    if prints:
-                        print('delete_splits marked true, audio was never created, thus never deleted for:\t', filename)
+                    # if prints:
+                    #     print('delete_splits marked true, audio was never created, thus never deleted for:\t', filename)
 
             # check if user wants to delete original audio file
             if delete_originals:
@@ -806,8 +817,8 @@ def generate_transcripts_from_directory(audio_directory, transcripts_directory, 
                 if prints:
                     print('delete_originals marked true, deleted original audio for:\t', filename)
 
-            if prints:
-                print('---------------------------------------------------------------------------')
+            # if prints:
+            #     print('---------------------------------------------------------------------------')
 
     if prints:
         print('completed transcript generation for all files in', audio_directory)
@@ -846,8 +857,8 @@ def generate_words_from_doc(document, filename, versioning, prints=True):
     # construct base term frequency dictionary object to store term frequency information
     results['tf'] = dict()
 
-    if prints:
-        print('started work on:', document, '...')
+    # if prints:
+    #     print('started work on:', document, '...')
 
     # initialize transcript variable
     transcript = ''
@@ -858,8 +869,8 @@ def generate_words_from_doc(document, filename, versioning, prints=True):
         transcript = versioning[most_recent]['full_text']
         versions = versioning
 
-        if prints:
-            print('using previously stored transcript')
+        # if prints:
+        #     print('using previously stored transcript')
 
     # no version, open the file
     except:
@@ -887,8 +898,8 @@ def generate_words_from_doc(document, filename, versioning, prints=True):
     # replace any conjoining characters with spaces and split the transcription into words
     words = re.sub('[_-]', ' ', transcript).split()
 
-    if prints:
-        print('split words...')
+    # if prints:
+    #     print('split words...')
 
     # for each word in the transcription
     for word in words:
@@ -929,8 +940,8 @@ def generate_words_from_doc(document, filename, versioning, prints=True):
     # store the word length of the transcription
     results['length'] = float(len(words))
 
-    if prints:
-        print('initial pass for transcript complete')
+    # if prints:
+    #     print('initial pass for transcript complete')
 
     # for each word in the generated term frequency dictionary
     for word, data in results['tf'].items():
@@ -938,8 +949,8 @@ def generate_words_from_doc(document, filename, versioning, prints=True):
         # compute the true term frequency
         results['tf'][word]['score'] = float(data['count']) / results['length']
 
-    if prints:
-        print('secondary pass for transcript complete, sending completed items')
+    # if prints:
+    #     print('secondary pass for transcript complete, sending completed items')
 
     # return the completed term frequency dictionary
     return results, versions
@@ -978,6 +989,8 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
     # check if the previously stored data falls into the local or database storage conventions used by this system
     if (type(stored_versions) is collections.OrderedDict) or (type(stored_versions) is dict):
 
+        rewrites = 0
+
         # for each transcript in the previously stored data complete rewrite process if needed
         for transcript in stored_versions:
 
@@ -988,6 +1001,8 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
 
             # if the most recent version was not created by this process, rewrite the transcript file for backup and tfidf processing
             if most_recent != 0:
+
+                rewrites += 1
 
                 # remove original
                 os.remove(transcript_directory + transcript + '.txt')
@@ -1000,9 +1015,12 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
                 outfile.close()
                 time.sleep(1)
 
-                if prints:
-                    print('rewrote file:', transcript_directory + transcript + '.txt')
-                    # print('\tusing text:', versions[most_recent]['full_text'][:20])
+                # if prints:
+                #     print('rewrote file:', transcript_directory + transcript + '.txt')
+                #     print('\tusing text:', versions[most_recent]['full_text'][:20])
+
+        if prints:
+            print('rewrote', rewrites, 'files ...')
 
     # initialize results dictionaries
     results = dict()
@@ -1032,8 +1050,8 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
 
             versioning[filename[:-4]] = file_versions
 
-            if prints:
-                print('adding word set to corpus...')
+            # if prints:
+            #     print('adding word set to corpus...')
 
             # get results for all words in corpus
             for word, score in file_results['tf'].items():
@@ -1049,13 +1067,12 @@ def generate_tfidf_from_directory(transcript_directory, storage_directory, store
             # add single file results to total file results
             results['transcripts'][filename[:-4]] = file_results
 
-            if prints:
-                print('completed file:', filename, '...')
-                print('---------------------------------------------------------------')
+            # if prints:
+            #     print('completed file:', filename, '...')
+            #     print('---------------------------------------------------------------')
 
     if prints:
-        print('starting second pass word tfidf scoring')
-        print('---------------------------------------------------------------')
+        print('starting second pass word tfidf scoring ...')
 
     cleaned_results = dict()
 
@@ -1292,7 +1309,7 @@ def combine_data_sources(feeds_store, tfidf_store, versioning_store, storage_dir
     if prints:
         print('stored combined data at: ' + result_file)
         print('stored combined data at: ' + result_log_file)
-        print('---------------------------------------------------------------')
+        print('----------------------------------------------------------------------------------------')
 
     return combined_data
 

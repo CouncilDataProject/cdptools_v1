@@ -179,12 +179,13 @@ def transcription_runner(project_directory, json_directory, log_directory, video
 
             time_elapsed = time.time() - system_start
 
-            # sleep the system if it wont overflow into system downtime
-            if (noNewFeedsAvailable):
-                print('collecting feeds again in:', (float(block_sleep_duration) / 60.0 / 60.0), 'HOURS...')
-                time.sleep(block_sleep_duration)
-
             checkCounter += 1
+
+            # sleep the system if it wont overflow into system downtime
+            if (noNewFeedsAvailable and (checkCounter < 12)):
+                print('collecting feeds again in:', (float(block_sleep_duration) / 60.0 / 60.0), 'HOURS...')
+                print('-------------------------------------------------------')
+                time.sleep(block_sleep_duration)
 
         feeds_duration = time.time() - feeds_start
         block['feeds_duration'] = (float(feeds_duration) / 60.0 / 60.0)
@@ -236,7 +237,7 @@ def transcription_runner(project_directory, json_directory, log_directory, video
         # Run for testing speed of search
         search_start = time.time()
         if prints:
-            pprint(predict_relevancy(search=test_search_term, tfidf_store=(json_directory + 'tfidf.json')))
+            print('highest relevancy found:', predict_relevancy(search=test_search_term, tfidf_store=(json_directory + 'tfidf.json'))[0][1]['relevancy'])
         else:
             predict_relevancy(search=test_search_term, tfidf_store=(json_directory + 'tfidf.json'))
 

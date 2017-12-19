@@ -195,8 +195,8 @@ def get_video_feeds(packed_routes, storage_directory, scraping_function, prints=
 
     # for each path and packed_route
     for path, routes in packed_routes.items():
-        if prints:
-            print('collecting feeds for:\t', path)
+        # if prints:
+        #     print('collecting feeds for:\t', path)
 
         # attach the found feeds to the storage list
         for item in scraping_function(path=clean_video_filename(path), routes=routes, prints=prints):
@@ -240,7 +240,7 @@ def get_video_feeds(packed_routes, storage_directory, scraping_function, prints=
 
         if prints:
             print('new store length:\t', len(previous_feeds))
-            print('----------------------------------------------------------------------------------------')
+            # print('----------------------------------------------------------------------------------------')
 
         feed_difference = (previous_length != len(previous_feeds))
 

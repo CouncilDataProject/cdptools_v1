@@ -202,8 +202,8 @@ def get_video_feeds(packed_routes, storage_directory, scraping_function, prints=
         for item in scraping_function(path=clean_video_filename(path), routes=routes, prints=prints):
             constructed_feeds.append(item)
 
-    if prints:
-        print('----------------------------------------------------------------------------------------')
+    # if prints:
+    #     print('----------------------------------------------------------------------------------------')
 
     # store the found feeds locally
     previous_feeds = list()

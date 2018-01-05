@@ -214,17 +214,15 @@ video_routes = {
                 'park': ['http://www.seattlechannel.org/mayor-and-council/city-council/seattle-park-district-board', 'Select Committee on Parks Funding'],
                 'transportation': ['http://www.seattlechannel.org/mayor-and-council/city-council/seattle-transportation-benefit-district', 'Select Committee on Transportation Funding'],
                 'arenas': ['http://www.seattlechannel.org/mayor-and-council/city-council/select-committee-on-civic-arenas', 'Select Committee on Civic Arenas'],
-                'housing': ['http://www.seattlechannel.org/mayor-and-council/city-council/select-committee-on-the-2016-seattle-housing-levy', 'Select Committee on the 2016 Seattle Housing Levy'],
-                'lighting': ['http://www.seattlechannel.org/mayor-and-council/city-council/select-committee-on-the-2016-seattle-city-light-strategic-planning', 'Select Committee on the 2016 Seattle City Light Strategic Planning'],
-                'finance': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-affordable-housing-neighborhoods-and-finance-committee', 'Affordable Housing, Neighborhoods, and Finance Committee'],
-                'utilities': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-civil-rights-utilities-economic-development-and-arts-committee', 'Civil Rights, Utilities, Economic Development, and Arts Committee'],
-                'education': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-education-equity-and-governance-committee', 'Education and Governance Committee'],
-                'energy': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-energy-and-environment-committee', 'Energy and Environment Committee'],
-                'communities': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-gender-equity-safe-communities-and-new-americans-committee', 'Gender Equity, Safe Communities, and New Americans Committee'],
-                'public_health': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-human-services-and-public-health-committee', 'Human Services and Public Health Committee'],
-                'civic_centers': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-parks-seattle-center-libraries-and-waterfront-committee', 'Parks, Seattle Center, Libraries, and Waterfront Committee'],
-                'zoning': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-planning-land-use-and-zoning-committee', 'Planning, Land Use, and Zoning Committee'],
-                'sustainability': ['http://www.seattlechannel.org/mayor-and-council/city-council/2016/2017-sustainability-and-transportation-committee', 'Sustainability and Transportation Committee']
+                'finance': ['https://www.seattlechannel.org/mayor-and-council/city-council/2018/2019-finance-and-neighborhoods', 'Affordable Housing, Neighborhoods, and Finance Committee'],
+                'utilities': ['https://www.seattlechannel.org/mayor-and-council/city-council/2018/2019-civil-rights-utilities-economic-development-and-arts-committee', 'Civil Rights, Utilities, Economic Development, and Arts Committee'],
+                'education': ['https://www.seattlechannel.org/mayor-and-council/city-council/2018/2019-gender-equity-safe-communities-new-americans-and-education-committee', 'Education and Governance Committee'],
+                'energy': ['https://www.seattlechannel.org/mayor-and-council/city-council/2018/2019-housing-health-energy-and-workers-rights-committee', 'Energy and Environment Committee'],
+                'communities': ['https://www.seattlechannel.org/mayor-and-council/city-council/2018/2019-human-services-equitable-development-and-renter-rights-committee', 'Gender Equity, Safe Communities, and New Americans Committee'],
+                'public_health': ['https://www.seattlechannel.org/mayor-and-council/city-council/2018/2019-human-services-equitable-development-and-renter-rights-committee', 'Human Services and Public Health Committee'],
+                'civic_centers': ['https://www.seattlechannel.org/mayor-and-council/city-council/2018/2019-civic-development-public-assets-and-native-communities-committee', 'Parks, Seattle Center, Libraries, and Waterfront Committee'],
+                'zoning': ['https://www.seattlechannel.org/mayor-and-council/city-council/2018/2019-planning-land-use-and-zoning-committee', 'Planning, Land Use, and Zoning Committee'],
+                'sustainability': ['https://www.seattlechannel.org/mayor-and-council/city-council/2018/2019-sustainability-and-transportation-committee', 'Sustainability and Transportation Committee']
 }
 
 

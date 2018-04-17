@@ -1,8 +1,15 @@
-configure_keys.py
-firebase_credentials.json
-__pycache__
-resources
+# generated folders
+__pycache__/
+
+# specific folders
+resouces/
+
+# generated files
+
+# specific files
 testing.py
-cdp-sea-firebase-adminsdk.json
-ignore_files.json
 cleaning.py
+configure_keys.py
+ignore_files.json
+firebase_credentials.json
+cdp-sea-firebase-adminsdk.json

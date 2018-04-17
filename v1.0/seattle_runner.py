@@ -236,7 +236,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
-cred = credentials.Certificate('C:/transcription_runner/python/cdp-sea-firebase-adminsdk.json')
+cred = credentials.Certificate('')
 firebase_admin.initialize_app(cred, {
     'databaseURL' : 'https://cdp-sea.firebaseio.com/'
 })

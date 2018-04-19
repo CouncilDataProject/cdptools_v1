@@ -3,4 +3,4 @@ pydub
 leven
 cython
 requests
-speech_recognition
+speechrecognition

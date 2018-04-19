@@ -69,5 +69,5 @@ REQUIRES = [
             "leven",
             "cython",
             "requests",
-            "speech_recognition"
+            "speechrecognition"
             ]

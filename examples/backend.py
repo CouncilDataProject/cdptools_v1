@@ -4,11 +4,11 @@ import io
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 
-from cdp.io.pipelines import BodyPipe as bp
-from cdp.utils import seattle as sea_utils
+from cdp.io import pipelines
+from cdp.utils import seattle
 from pprint import pprint
 
 city = "seattle"
-seattle_bodies = bp(city, sea_utils.body_name_shortener)
+s_bodies = pipelines.BodyPipe(city, seattle.body_name_shortener)
 
-pprint(seattle_bodies.short_names())
+pprint(s_bodies.short_names)

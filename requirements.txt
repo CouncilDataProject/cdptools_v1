@@ -1,0 +1,5 @@
+bs4
+pydub
+requests
+Levenshtein
+speech_recognition

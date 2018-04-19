@@ -66,8 +66,6 @@ VERSION = __version__
 REQUIRES = [
             "bs4",
             "pydub",
-            "leven",
-            "cython",
             "requests",
             "speechrecognition"
             ]

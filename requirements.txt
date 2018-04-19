@@ -1,6 +1,4 @@
 bs4
 pydub
-leven
-cython
 requests
 speechrecognition

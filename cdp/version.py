@@ -67,6 +67,6 @@ REQUIRES = [
             "bs4",
             "pydub",
             "requests",
-            "python-levenshtein",
+            "pythonLevenshtein",
             "speech_recognition"
             ]

@@ -63,4 +63,10 @@ MAJOR = _version_major
 MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
-REQUIRES = ["bs4", "pydub", "requests", "Levenshtein", "speech_recognition"]
+REQUIRES = [
+            "bs4",
+            "pydub",
+            "requests",
+            "python-Levenshtein",
+            "speech_recognition"
+            ]

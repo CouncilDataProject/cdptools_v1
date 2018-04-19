@@ -1,5 +1,6 @@
 bs4
 pydub
+leven
+cython
 requests
-pythonLevenshtein
 speech_recognition

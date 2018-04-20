@@ -1,4 +1,4 @@
-from .legistarpipe import *
+from .LegistarPipe import *
 
 class BodyPipe(LegistarPipe):
     """

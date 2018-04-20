@@ -78,28 +78,6 @@ class LegistarPipe:
     Status Code: {err}
     """.format(err=r.status_code))
 
-    def __getattribute__(self, attr):
-        """
-        Parameters
-        ----------
-        self: LegistarPipe
-            The LegistarPipe that stores which city to query data for.
-        attr: str
-            Which attribute to retrieve data for.
-
-        Output
-        ----------
-        Returns the attribute desired.
-        If the attribute desired has not been initialized yet, it will attempt
-        to initialize the attribute by setting the attribute to the return of
-        eval("self.get_" + attr)().
-        """
-
-        if object.__getattribute__(self, attr) is None:
-            setattr(self, attr, eval("self.get_" + attr)())
-
-        return object.__getattribute__(self, attr)
-
     def update(self):
         """
         Parameters

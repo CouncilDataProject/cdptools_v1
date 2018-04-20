@@ -1,4 +1,4 @@
-from .LegistarPipe import *
+from .legistarpipe import *
 
 class BodyPipe(LegistarPipe):
     """
@@ -43,15 +43,17 @@ Please view our documentation for an example.
             self.shortener = None
 
         self.updatable = [
-                        "bodies",
-                        "body_types",
-                        "active",
-                        "names",
-                        "short_names"
-                        ]
+                            "_bodies",
+                            "_body_types",
+                            "_active",
+                            "_names",
+                            "_short_names"
+                            ]
+
         self.update()
 
-    def get_bodies(self):
+    @property
+    def bodies(self):
         """
         Parameters
         ----------
@@ -63,9 +65,13 @@ Please view our documentation for an example.
         Returns a json object of bodies queried from the Legistar API.
         """
 
-        return self.get_legistar_object("Bodies").json()
+        if self._bodies is None:
+            self._bodies = self.get_legistar_object("Bodies").json()
 
-    def get_body_types(self):
+        return self._bodies
+
+    @property
+    def body_types(self):
         """
         Parameters
         ----------
@@ -76,10 +82,13 @@ Please view our documentation for an example.
         ----------
         Returns a json object of body_types queried from the Legistar API.
         """
+        if self._body_types is None:
+            self._body_types = self.get_legistar_object("BodyTypes").json()
 
-        return self.get_legistar_object("BodyTypes").json()
+        return self._body_types
 
-    def get_active(self):
+    @property
+    def active(self):
         """
         Parameters
         ----------
@@ -91,14 +100,16 @@ Please view our documentation for an example.
         Returns a list of active bodies queried from the Legistar API.
         """
 
-        active = list()
-        for body in self.bodies:
-            if body["BodyActiveFlag"] == 1:
-                active.append(body)
+        if self._active is None:
+            self._active = list()
+            for body in self.bodies:
+                if body["BodyActiveFlag"] == 1:
+                    self._active.append(body)
 
-        return active
+        return self._active
 
-    def get_names(self):
+    @property
+    def names(self):
         """
         Parameters
         ----------
@@ -110,9 +121,13 @@ Please view our documentation for an example.
         Returns a list of body names queried from the Legistar API.
         """
 
-        return [body["BodyName"] for body in self.bodies]
+        if self._names is None:
+            self._names = [body["BodyName"] for body in self.bodies]
 
-    def get_short_names(self):
+        return self._names
+
+    @property
+    def short_names(self):
         """
         Parameters
         ----------
@@ -126,9 +141,10 @@ Please view our documentation for an example.
         the default list of names stored in self.names.
         """
 
-        if self.shortener is None:
-            short_names = self.names
-        else:
-            short_names = self.shortener(self.bodies)
+        if self._short_names is None:
+            if self.shortener is None:
+                self._short_names = self.names
+            else:
+                self._short_names = self.shortener(self.bodies)
 
-        return short_names
+        return self._short_names

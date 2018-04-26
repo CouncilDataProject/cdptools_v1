@@ -5,6 +5,7 @@ __pycache__/
 resouces/
 
 # generated files
+.DS_Store
 
 # specific files
 testing.py

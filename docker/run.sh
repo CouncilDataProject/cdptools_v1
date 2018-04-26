@@ -1,3 +1,3 @@
 docker run -it --rm \
-    cdp \
+    councildataproject/cdp:0.1.1 \
     bash

@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 import os
 from setuptools import setup, find_packages
-PACKAGES = find_packages(exclude=["v1.0", "work_in_progress"])
+
+exclude_dirs = ["v1.0",
+                "docker"
+                "examples",
+                "work_in_progress"]
+
+PACKAGES = find_packages(exclude=exclude_dirs)
 
 # Get version and release info, which is all stored in shablona/version.py
 ver_file = os.path.join("cdp", "version.py")
@@ -23,7 +29,8 @@ opts = dict(name=NAME,
             version=VERSION,
             packages=PACKAGES,
             install_requires=REQUIRES,
-            requires=REQUIRES)
+            requires=REQUIRES,
+            scripts=SCRIPTS)
 
 if __name__ == "__main__":
     setup(**opts)

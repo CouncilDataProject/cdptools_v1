@@ -69,3 +69,6 @@ REQUIRES = [
             "requests",
             "speechrecognition"
             ]
+SCRIPTS = [
+            "cdp/bin/run_cdp_server"
+            ]

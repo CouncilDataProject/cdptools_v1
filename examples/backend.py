@@ -4,8 +4,8 @@ import io
 sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding = 'utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding = 'utf-8')
 
-from cdp.io import pipelines
-from cdp.utils import seattle
+from cdpprocessor.io import pipelines
+from cdpprocessor.utils import seattle
 from pprint import pprint
 
 import datetime

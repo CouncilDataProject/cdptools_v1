@@ -22,15 +22,16 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Topic :: Scientific/Engineering/Government"]
 
 # Description should be a one-liner:
-description = "cdp: tools and functions to support CouncilDataProject servers"
+description = "cdp processor: tools and functions to support CouncilDataProject servers"
 # Long description will go up on the pypi page
 long_description = """
-cdp
+cdp processor
 ========
-cdp is the tools and functions library built to help run CouncilDataProject
-supported cities. It includes Legistar and video IO and processing tools and
-incorporates tools from other CouncilDataProject created libraries that assist
-in simple transcription task and topic and sentiment analysis.
+cdp processor is the tools and functions library built to help run
+CouncilDataProject supported cities. It includes Legistar and video IO and
+processing tools and incorporates tools from other CouncilDataProject created
+libraries that assist in simple transcription task and topic and sentiment
+analysis.
 Contact
 =======
 Jackson Maxfield Brown
@@ -48,7 +49,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 """
 
-NAME = "cdp"
+NAME = "cdpprocessor"
 MAINTAINER = "Jackson Maxfield Brown"
 MAINTAINER_EMAIL = "jmaxfieldbrown@gmail.org"
 DESCRIPTION = description
@@ -70,5 +71,5 @@ REQUIRES = [
             "speechrecognition"
             ]
 SCRIPTS = [
-            "cdp/bin/run_cdp_server"
+            "cdpprocessor/bin/run_cdp_server"
             ]

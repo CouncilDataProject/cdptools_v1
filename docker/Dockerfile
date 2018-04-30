@@ -19,6 +19,6 @@ RUN pip3 install \
     speechrecognition
 
 RUN pip3 install \
-    git+https://github.com/CouncilDataProject/cdp.git
+    git+https://github.com/CouncilDataProject/processor.git
 
 WORKDIR /home/

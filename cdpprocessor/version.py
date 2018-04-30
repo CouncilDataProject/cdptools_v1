@@ -71,5 +71,6 @@ REQUIRES = [
             "speechrecognition"
             ]
 SCRIPTS = [
-            "cdpprocessor/bin/run_cdp_server"
+            "cdpprocessor/bin/run_cdp_server",
+            "cdpprocessor/bin/create_cdp_instance"
             ]

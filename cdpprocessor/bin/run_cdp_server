@@ -3,8 +3,14 @@
 from cdpprocessor.io import pipelines
 from cdpprocessor.utils import seattle
 from pprint import pprint
+import json
 
-import datetime
+with open("/home/config.json", "r") as _config:
+    config = json.load(_config)
+
+pprint(config)
+
+print("-" * 80)
 
 city = "seattle"
 s_bodies = pipelines.BodyPipe(city, seattle.body_name_shortener)

@@ -1,2 +1,2 @@
-docker run \
+docker run -it\
     councildataproject/cdp

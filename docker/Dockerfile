@@ -22,5 +22,3 @@ RUN pip3 install \
     git+https://github.com/CouncilDataProject/cdp.git
 
 WORKDIR /home/
-
-CMD ['run_cdp_server']

@@ -1,1 +1,1 @@
-docker build -t councildataproject/cdp .
+docker build -t councildataproject/processor .

@@ -70,5 +70,5 @@ REQUIRES = [
             "speechrecognition"
             ]
 SCRIPTS = [
-            "cdp/bin/run_cdp_server"
+            "cdp/bin/run_cdp_server.py"
             ]

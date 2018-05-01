@@ -2,7 +2,7 @@
 
 CDP Processor contains the tools and functions required to setup and run Council
 Data Project instances. For detailed documentation please refer our [individual
-docs](docs/README.md).
+docs](docs/).
 
 ## Quick Start
 
@@ -12,10 +12,10 @@ the following attributes:
 `/home/server_config.json`:
 ```json
 {
-    "legistar_city": ...,
-    "storage_directory": ...,
-    "collection_script": ...,
-    "firebase_config": ...
+    "legistar_city": "...",
+    "storage_directory": "...",
+    "collection_script": "...",
+    "firebase_config": "..."
 }
 ```
 

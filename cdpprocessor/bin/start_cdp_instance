@@ -81,9 +81,9 @@ Please review our documentation for an example server config json file.
                         "-v",
                         args.config + ":/home/config.json",
                         "-v",
-                        args.config["collection_script"] + ":/home/urls.py",
+                        opts["collection_script"] + ":/home/urls.py",
                         "-v",
-                        args.config["storage_directory"] + ":/home/storage/",
+                        opts["storage_directory"] + ":/home/storage/",
                         "councildataproject/processor",
                         "run_cdp_server"]
 

@@ -13,12 +13,6 @@ RUN apt-get update && apt-get install -y \
     python3-pip
 
 RUN pip3 install \
-    bs4 \
-    pydub \
-    requests \
-    speechrecognition
-
-RUN pip3 install \
     git+https://github.com/CouncilDataProject/processor.git
 
 WORKDIR /home/

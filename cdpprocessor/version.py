@@ -67,10 +67,11 @@ VERSION = __version__
 REQUIRES = [
             "bs4",
             "pydub",
+            "docker",
             "requests",
             "speechrecognition"
             ]
 SCRIPTS = [
             "cdpprocessor/bin/run_cdp_server",
-            "cdpprocessor/bin/create_cdp_instance"
+            "cdpprocessor/bin/start_cdp_instance"
             ]

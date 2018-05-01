@@ -4,6 +4,7 @@ import os
 from setuptools import setup, find_packages
 
 exclude_dirs = ["v1.0",
+                "docs",
                 "docker",
                 "examples",
                 "work_in_progress"]

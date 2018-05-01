@@ -1,4 +1,5 @@
 bs4
 pydub
+docker
 requests
 speechrecognition

@@ -5,13 +5,17 @@ from cdpprocessor.utils import seattle
 from pprint import pprint
 import json
 
-with open("/home/config.json", "r") as _config:
-    config = json.load(_config)
+def main():
+    with open("/home/config.json", "r") as _config:
+        config = json.load(_config)
 
-pprint(config)
+    pprint(config)
 
-print("-" * 80)
+    print("-" * 80)
 
-city = "seattle"
-s_bodies = pipelines.BodyPipe(city, seattle.body_name_shortener)
-pprint(s_bodies.short_names)
+    city = "seattle"
+    s_bodies = pipelines.BodyPipe(city, seattle.body_name_shortener)
+    pprint(s_bodies.short_names)
+
+if __name__ == "__main__":
+    main()

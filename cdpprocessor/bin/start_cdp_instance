@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from cdpprocessor.io.pipelines import LegistarPipe
+from requests.exceptions import ConnectionError
 import subprocess
 import argparse
 import docker
@@ -10,48 +11,51 @@ import os
 def main():
     parser = argparse.ArgumentParser(
                                     description="CDP server quick start script")
+    parser.add_argument("-u", "--update",
+                        dest="update",
+                        action="store_true",
+                        help="Should the server update to the latest image")
     parser.add_argument(dest="config",
                         help="OS path for the server config json file")
-
     args = parser.parse_args()
 
     if not os.path.exists(args.config):
         raise ValueError("""
-Could not find the specified server config from the specified path.
+Could not find the specified server config from the specified path: {config}.
 Please review our documentation for an example server config.
-""")
+""".format(config=args.config))
 
     try:
         with open(args.config, "r") as in_file:
             opts = json.load(in_file)
 
-        check_keys = ["legistar_city",
+        check_config = ["legistar_city",
                         "storage_directory",
                         "collection_script",
                         "firebase_config"]
-        assert all([key in opts for key in check_keys]), """
+        assert all([key in opts for key in check_config]), """
 Missing required keys... {missing}
-""".format(missing=[key not in opts for key in check_keys])
+""".format(missing=[key not in opts for key in check_config])
 
         try:
             test = LegistarPipe(opts["legistar_city"]).get_legistar_object()
-        except ValueError:
+        except (ValueError, ConnectionError):
             raise ValueError("""
-Could not find or connect to the specified Legistar connected city.
+Could not find or connect to the specified Legistar connected city: {city}.
 Please review our documentation for an example server config json file.
-""")
+""".format(city=opts["legistar_city"]))
 
         if not os.path.isdir(opts["storage_directory"]):
             raise ValueError("""
-Could not find the specified storage directory.
+Could not find the specified storage directory: {storage_dir}.
 Please review our documentation for an example server config json file.
-""")
+""".format(storage_dir=opts["storage_directory"]))
 
         if not os.path.exists(opts["collection_script"]):
             raise ValueError("""
-Could not find the specified video url list creation python script.
+Could not find the specified video url list creation python script: {script}.
 Please review our documentation for an example server config json file.
-""")
+""".format(script=opts["collection_script"]))
 
         # TODO:
         # attempt to load the video collection function using import lib
@@ -70,13 +74,17 @@ Please review our documentation for an example server config json file.
     print("Pulling CDP processing server Docker image...")
 
     client = docker.from_env()
-    client.images.pull("councildataproject/processor")
+    cdp_image = "councildataproject/processor"
+
+    if cdp_image not in client.images.list() or args.update:
+        client.images.pull("councildataproject/processor")
 
     print("Starting server with the provided config...")
     print("-" * 80)
 
     constructed_pipe = ["docker",
                         "run",
+                        "--rm"
                         "-t",
                         "-v",
                         args.config + ":/home/config.json",

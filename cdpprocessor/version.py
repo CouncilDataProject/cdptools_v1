@@ -73,5 +73,6 @@ REQUIRES = [
             ]
 SCRIPTS = [
             "cdpprocessor/bin/run_cdp_server",
-            "cdpprocessor/bin/start_cdp_instance"
+            "cdpprocessor/bin/start_cdp_instance",
+            "cdpprocessor/bin/create_cdp_test_db"
             ]

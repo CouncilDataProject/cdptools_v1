@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+
+from cdpprocessor.io.pipelines import LegistarPipe
+import json
+
+# TODO:
+# add argparser
+# handle all format with variables
+# save all json files
+# construct condensed db with schema reduction
+
+client = "seattle"
+request = "v1/{c}/".format(c=client)
+pipe = LegistarPipe(client)
+
+queries = ["Actions",
+            "Actions/{ActionId}",
+            "Bodies",
+            "Bodies/{BodyId}",
+            "BodyTypes",
+            "Bodies/{BodyTypeId}",
+            "CodeSections",
+            "CodeSections/{CodeSectionId}",
+            "Events",
+            "EventDates/{BodyId}?FutureDatesOnly=True",
+            "Events/{EventId}/\
+                EventItems?\
+                &AgendaNote=1\
+                &MinutesNote=1\
+                &Attachments=1"
+            "Indexes",
+            "Indexes/{IndexId}",
+            "Matters",
+            "Matters/{MatterId}"
+]
+
+queries = [q.replace(" ", "") for q in queries]

@@ -68,15 +68,22 @@ class LegistarPipe:
         check_string(query, check_query_err)
 
         url = "http://webapi.legistar.com/v1/{c}/{q}"
-        r = requests.get(url.format(c=self.city, q=query))
+        try:
+            r = requests.get(url.format(c=city, q=query))
 
-        if r.status_code == 200:
-            return r
-        else:
-            raise ValueError("""
-    Something went wrong with legistar get.
-    Status Code: {err}
-    """.format(err=r.status_code))
+            if r.status_code == 200:
+                return r.json()
+            else:
+                raise ValueError("""
+Something went wrong with legistar get.
+Status Code: {err}
+""".format(err=r.status_code))
+
+        except requests.exceptions.ConnectionError:
+            raise requests.exceptions.ConnectionError("""
+Something went wrong with legistar connection.
+Could not connect to server.
+""")
 
     def update(self):
         """

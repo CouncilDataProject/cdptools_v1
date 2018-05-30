@@ -11,6 +11,7 @@ resouces/
 # specific files
 testing.py
 cleaning.py
+STEPLIST.json
 configure_keys.py
 ignore_files.json
 firebase_credentials.json

@@ -1,37 +1,200 @@
 #!/usr/bin/env python
 
 from cdpprocessor.io.pipelines import LegistarPipe
+import argparse
+import pathlib
 import json
+import os
 
 # TODO:
-# add argparser
 # handle all format with variables
 # save all json files
 # construct condensed db with schema reduction
 
-client = "seattle"
-request = "v1/{c}/".format(c=client)
-pipe = LegistarPipe(client)
+def main():
+    parser = argparse.ArgumentParser(description="Create CDP test/ staging db\
+     that can be used for both testing the backend and frontend connections.")
+    parser.add_argument("-u", "--update",
+                        dest="update",
+                        action="store_true",
+                        help="Should the server overwrite the current test db")
+    parser.add_argument(dest="city",
+                        help="Which legistar connected city should the test db\
+                         use data from")
+    parser.add_argument(dest="store_path",
+                        help="OS path where the test db be stored (If you are\
+                         also setting up a front-end we recommend somewhere\
+                          easily accessible)")
+    args = parser.parse_args()
 
-queries = ["Actions",
-            "Actions/{ActionId}",
-            "Bodies",
-            "Bodies/{BodyId}",
-            "BodyTypes",
-            "Bodies/{BodyTypeId}",
-            "CodeSections",
-            "CodeSections/{CodeSectionId}",
-            "Events",
-            "EventDates/{BodyId}?FutureDatesOnly=True",
-            "Events/{EventId}/\
-                EventItems?\
-                &AgendaNote=1\
-                &MinutesNote=1\
-                &Attachments=1"
-            "Indexes",
-            "Indexes/{IndexId}",
-            "Matters",
-            "Matters/{MatterId}"
-]
+    get_legistar_tables(args.city, args.store_path, args.update)
+    create_staging_db(args.city, args.store_path, args.update)
 
-queries = [q.replace(" ", "") for q in queries]
+def get_legistar_tables(client="seattle", storage="/cdp/stg/", update=False):
+    # ensure param types
+    if not isinstance(client, str):
+        raise ValueError("""
+The connection client passed must be a string.
+Ex: "seattle"
+Given type: {t}
+Given value: {v}
+""".format(t=type(client), v=client))
+
+    if not isinstance(storage, str) and not isinstance(storage, pathlib.Path):
+        raise ValueError("""
+The storage path passed must be a string or pathlib.Path.
+Ex: "/cdp/stg/"
+Given type: {t}
+Given value: {v}
+""".format(t=type(storage), v=storage))
+
+    if not isinstance(update, bool):
+        raise ValueError("""
+The update parameter passed must be a boolean value.
+Ex: False
+Given type: {t}
+Given value: {v}
+""".format(t=type(update), v=update))
+
+    client = client.lower()
+    if isinstance(storage, str):
+        storage = pathlib.Path(storage)
+
+    if client not in str(storage):
+        storage /= client
+
+    if not os.path.isdir(storage):
+        os.makedirs(storage)
+
+    print("-" * 80)
+    print("Pulling Legistar tables from client:", client,
+          "\nWill store tables and completed database at:", storage,
+          "\nWill update existing tables:", update)
+    print("-" * 80)
+
+    pipe = LegistarPipe(client)
+
+    simple = ["Actions",
+              "Bodies",
+              "BodyTypes",
+              "CodeSections",
+              "Events",
+              "Indexes",
+              "Matters"
+    ]
+    extended = ["Actions/{ActionId}",
+                "Bodies/{BodyId}",
+                "Bodies/{BodyTypeId}",
+                "CodeSections/{CodeSectionId}",
+                "EventDates/{BodyId}?FutureDatesOnly=True",
+                "Events/{EventId}/\
+                  EventItems?\
+                  &AgendaNote=1\
+                  &MinutesNote=1\
+                  &Attachments=1",
+                "Indexes/{IndexId}",
+                "Matters/{MatterId}"
+    ]
+
+    results = {}
+    for query in simple:
+        request = "v1/{c}/{q}".format(c=client, q=query)
+        request = request.replace(" ", "")
+
+        # TODO:
+        # actual query completion
+
+        results[query] = {}
+        print("Pulled:", request)
+
+    # TODO:
+    # figure out simple map to extended id addition
+    # format_attrs = {(simple + "Id"): results[simple][list(results.keys())[0]]}
+    format_attrs = {"ActionId": 100,
+                    "BodyId": 200,
+                    "BodyTypeId": 300,
+                    "CodeSectionId": 400,
+                    "EventId": 500,
+                    "IndexId": 600,
+                    "MatterId": 700}
+
+    # for query in extended:
+    #     # TODO:
+    #     # dict to attrs convert
+    #     request = "v1/{c}/{q}".format(c=client, q=query.format(format_attrs))
+    #     request = request.replace(" ", "")
+    #
+    #     # TODO:
+    #     # actual query completion
+    #
+    #     results[query] = {}
+    #     print("Pulled:", request)
+
+    print("-" * 80)
+
+    for query, result in results.items():
+        table_store = storage / (query + ".json")
+        if not os.path.exists(table_store) or update:
+            with open(table_store, 'w') as outfile:
+                json.dump(result, outfile)
+                print("Stored:", query)
+        else:
+            print(query, "was previously stored and update is:", update)
+
+    print("-" * 80)
+    print("Legistar table storage complete")
+    print("-" * 80)
+
+    return results
+
+def create_staging_db(client="seattle", storage="/cdp/stg/", update=False):
+    # ensure param types
+    if not isinstance(client, str):
+        raise ValueError("""
+The connection client passed must be a string.
+Ex: "seattle"
+Given type: {t}
+Given value: {v}
+""".format(t=type(client), v=client))
+
+    if not isinstance(storage, str) and not isinstance(storage, pathlib.Path):
+        raise ValueError("""
+The storage path passed must be a string or pathlib.Path.
+Ex: "/cdp/stg/"
+Given type: {t}
+Given value: {v}
+""".format(t=type(storage), v=storage))
+
+    if not isinstance(update, bool):
+        raise ValueError("""
+The update parameter passed must be a boolean value.
+Ex: False
+Given type: {t}
+Given value: {v}
+""".format(t=type(update), v=update))
+
+    client = client.lower()
+    if isinstance(storage, str):
+        storage = pathlib.Path(storage)
+
+    if client not in str(storage):
+        storage /= client
+
+    print("-" * 80)
+    print("Creating CDP NoSQL test/ staging database for client:", client,
+          "\nWill store completed json at:", storage,
+          "\nWill update existing json:", update)
+    print("-" * 80)
+
+    for file in os.listdir(storage):
+        print(file)
+
+    # TODO:
+    # process tables into NoSQL schema
+
+    print("-" * 80)
+    print("CDP NoSQL test/ staging database complete")
+    print("-" * 80)
+
+if __name__ == "__main__":
+    main()

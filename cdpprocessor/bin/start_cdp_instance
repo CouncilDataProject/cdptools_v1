@@ -9,8 +9,11 @@ import json
 import os
 
 def main():
-    parser = argparse.ArgumentParser(
-                                    description="CDP server quick start script")
+    parser = argparse.ArgumentParser(description="CDP server quick start\
+     script will use the provided config and options to install the most\
+      up-to-date and stable docker image if specified and not already\
+       installed, additionally will use the installed docker image to start\
+        the backend server data collection and processing.")
     parser.add_argument("-u", "--update",
                         dest="update",
                         action="store_true",
@@ -34,7 +37,7 @@ Please review our documentation for an example server config.
                         "collection_script",
                         "firebase_config"]
         assert all([key in opts for key in check_config]), """
-Missing required keys... {missing}
+Missing required keys: {missing}
 """.format(missing=[key not in opts for key in check_config])
 
         try:

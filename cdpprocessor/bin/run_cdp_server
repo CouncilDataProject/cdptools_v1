@@ -3,10 +3,16 @@
 from cdpprocessor.io import pipelines
 from cdpprocessor.utils import seattle
 from pprint import pprint
+import pathlib
 import json
 
+# TODO:
+# ensure pathlib is used for all path
+
 def main():
-    with open("/home/config.json", "r") as _config:
+    root = pathlib.Path("/home/")
+
+    with open(root / "config.json", "r") as _config:
         config = json.load(_config)
 
     pprint(config)

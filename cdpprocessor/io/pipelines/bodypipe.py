@@ -66,7 +66,7 @@ Please view our documentation for an example.
         """
 
         if self._bodies is None:
-            self._bodies = self.get_legistar_object("Bodies").json()
+            self._bodies = self.get_legistar_object("Bodies")
 
         return self._bodies
 
@@ -83,7 +83,7 @@ Please view our documentation for an example.
         Returns a json object of body_types queried from the Legistar API.
         """
         if self._body_types is None:
-            self._body_types = self.get_legistar_object("BodyTypes").json()
+            self._body_types = self.get_legistar_object("BodyTypes")
 
         return self._body_types
 

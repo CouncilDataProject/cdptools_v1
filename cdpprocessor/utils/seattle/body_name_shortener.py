@@ -1,5 +1,5 @@
 def body_name_shortener(bodies):
-    names = list()
+    names = []
     for body in bodies:
         n_one = body["BodyName"].lower()
         n = body["BodyDescription"].split('/')

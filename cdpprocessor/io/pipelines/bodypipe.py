@@ -1,5 +1,13 @@
 from .legistarpipe import *
 
+CHECK_CITY_ERR = """
+BodyPipe requires the "city" parameter to be a string to initialize.
+"""
+
+CHECK_SHORTENER_ERR = """
+BodyPipe requires the "name_shortener" parameter to be callable to complete.
+"""
+
 class BodyPipe(LegistarPipe):
     """
     Extends
@@ -24,31 +32,17 @@ class BodyPipe(LegistarPipe):
             A custom body name shortening function.
         """
 
-        check_city_err = """
-BodyPipe requires a legistar city name to initialize.
-Given: {s_type}
-Please view our documentation for an example.
-"""
+        self.city = check_types(city, [str], CHECK_CITY_ERR)
+        self.shortener = check_types(name_shortener,
+                                     ['function', None],
+                                     CHECK_SHORTENER_ERR)
 
-        check_shortener_err = """
-The provided custom body name shortener function is not callable.
-Given: {f_type}
-Please view our documentation for an example.
-"""
-
-        self.city = check_string(city, check_city_err)
-        if name_shortener is not None:
-            self.shortener = check_function(name_shortener, check_shortener_err)
-        else:
-            self.shortener = None
-
-        self.updatable = [
-                            "_bodies",
-                            "_body_types",
-                            "_active",
-                            "_names",
-                            "_short_names"
-                            ]
+        self.updatable = ["_bodies",
+                          "_body_types",
+                          "_active",
+                          "_names",
+                          "_short_names"
+        ]
 
         self.update()
 
@@ -66,7 +60,8 @@ Please view our documentation for an example.
         """
 
         if self._bodies is None:
-            self._bodies = self.get_legistar_object("Bodies")
+            self._bodies = self.get_legistar_object("Bodies",
+                                                    pages="all")
 
         return self._bodies
 
@@ -83,7 +78,8 @@ Please view our documentation for an example.
         Returns a json object of body_types queried from the Legistar API.
         """
         if self._body_types is None:
-            self._body_types = self.get_legistar_object("BodyTypes")
+            self._body_types = self.get_legistar_object("BodyTypes",
+                                                        pages="all")
 
         return self._body_types
 

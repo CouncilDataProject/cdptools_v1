@@ -1,10 +1,4 @@
 CHECK_TYPES_ERR = """
-The parameter provided must be one of the following: {p},
-Given type: {t}
-Given value: {v}
-"""
-
-CHECK_TYPES_ERR_FOOTER = """
 Allowed types: {p}
 Given type: {t}
 Given value: {v}
@@ -27,5 +21,7 @@ Given value: {v}
     if isinstance(var, types):
         return var
 
-    err += CHECK_TYPES_ERR_FOOTER
+    if err != CHECK_TYPES_ERR:
+        err += CHECK_TYPES_ERR_FOOTER
+
     raise TypeError(err.format(p=types, t=type(var), v=var))

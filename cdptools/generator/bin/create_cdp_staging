@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from cdpprocessor.io.pipelines import LegistarPipe
+from cdptools.processor.io.pipelines import LegistarPipe
+import cdptools.utils.checks
 import argparse
 import pathlib
 import json
@@ -32,29 +33,9 @@ def main():
 
 def get_legistar_tables(client="seattle", storage="/cdp/stg/", update=False):
     # ensure param types
-    if not isinstance(client, str):
-        raise ValueError("""
-The connection client passed must be a string.
-Ex: "seattle"
-Given type: {t}
-Given value: {v}
-""".format(t=type(client), v=client))
-
-    if not isinstance(storage, str) and not isinstance(storage, pathlib.Path):
-        raise ValueError("""
-The storage path passed must be a string or pathlib.Path.
-Ex: "/cdp/stg/"
-Given type: {t}
-Given value: {v}
-""".format(t=type(storage), v=storage))
-
-    if not isinstance(update, bool):
-        raise ValueError("""
-The update parameter passed must be a boolean value.
-Ex: False
-Given type: {t}
-Given value: {v}
-""".format(t=type(update), v=update))
+    checks.check_types(client, [str])
+    checks.check_types(storage, [str])
+    checks.check_types(update, [bool])
 
     client = client.lower()
     if isinstance(storage, str):
@@ -149,29 +130,9 @@ Given value: {v}
 
 def create_staging_db(client="seattle", storage="/cdp/stg/", update=False):
     # ensure param types
-    if not isinstance(client, str):
-        raise ValueError("""
-The connection client passed must be a string.
-Ex: "seattle"
-Given type: {t}
-Given value: {v}
-""".format(t=type(client), v=client))
-
-    if not isinstance(storage, str) and not isinstance(storage, pathlib.Path):
-        raise ValueError("""
-The storage path passed must be a string or pathlib.Path.
-Ex: "/cdp/stg/"
-Given type: {t}
-Given value: {v}
-""".format(t=type(storage), v=storage))
-
-    if not isinstance(update, bool):
-        raise ValueError("""
-The update parameter passed must be a boolean value.
-Ex: False
-Given type: {t}
-Given value: {v}
-""".format(t=type(update), v=update))
+    checks.check_types(client, [str])
+    checks.check_types(storage, [str])
+    checks.check_types(update, [bool])
 
     client = client.lower()
     if isinstance(storage, str):

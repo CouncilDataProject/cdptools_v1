@@ -1,18 +1,12 @@
 # generated folders
 __pycache__/
-cdpprocessor.egg-info
+cdptools.egg-info/
 
 # specific folders
-resouces/
 
 # generated files
 .DS_Store
 
 # specific files
-testing.py
-cleaning.py
-STEPLIST.json
-configure_keys.py
-ignore_files.json
 firebase_credentials.json
 cdp-sea-firebase-adminsdk.json

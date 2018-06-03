@@ -12,7 +12,7 @@ exclude_dirs = ["v1.0",
 PACKAGES = find_packages(exclude=exclude_dirs)
 
 # Get version and release info, which is all stored in cdpprocessor/version.py
-ver_file = os.path.join("cdpprocessor", "version.py")
+ver_file = os.path.join("cdp", "version.py")
 with open(ver_file) as f:
     exec(f.read())
 

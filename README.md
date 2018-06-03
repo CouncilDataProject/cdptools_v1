@@ -1,8 +1,8 @@
-# CDP Processor
+# CDP Tools
 
-CDP Processor contains the tools and functions required to setup and run Council
-Data Project instances. For detailed documentation please refer our [individual
-docs](docs/).
+CDP Tools contains the tools and functions required to setup and run Council
+Data Project instances as well as generate city sites. For detailed
+documentation please refer our [individual docs](docs/).
 
 ## Quick Start
 
@@ -21,7 +21,7 @@ the following attributes:
 
 To then start the server you would simply:
 ```bash
-$ pip install git+https://github.com/CouncilDataProject/processor.git
+$ pip install git+https://github.com/CouncilDataProject/cdp.git
 $ start_cdp_instance /home/server_config.json
 ```
 

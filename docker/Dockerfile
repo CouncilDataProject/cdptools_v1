@@ -13,6 +13,6 @@ RUN apt-get update && apt-get install -y \
     python3-pip
 
 RUN pip3 install \
-    git+https://github.com/CouncilDataProject/processor.git
+    git+https://github.com/CouncilDataProject/cdptools.git
 
 WORKDIR /home/

@@ -22,7 +22,7 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Topic :: Scientific/Engineering/Government"]
 
 # Description should be a one-liner:
-description = "cdp: tools to support CouncilDataProject servers and sites"
+description = "cdptools: tools to support CouncilDataProject servers and sites"
 # Long description will go up on the pypi page
 long_description = """
 cdptools
@@ -49,7 +49,7 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see http://www.gnu.org/licenses/.
 """
 
-NAME = "cdp"
+NAME = "cdptools"
 MAINTAINER = "Jackson Maxfield Brown"
 MAINTAINER_EMAIL = "jmaxfieldbrown@gmail.org"
 DESCRIPTION = description
@@ -72,8 +72,8 @@ REQUIRES = [
             "speechrecognition"
             ]
 SCRIPTS = [
-            "cdp/generator/bin/create_cdp_site",
-            "cdp/generator/bin/create_cdp_staging",
-            "cdp/processor/bin/start_cdp_instance",
-            "cdp/processor/bin/start_cdp_processor"
+            "cdptools/generator/bin/create_cdp_site",
+            "cdptools/generator/bin/create_cdp_staging",
+            "cdptools/processor/bin/start_cdp_instance",
+            "cdptools/processor/bin/start_cdp_processor"
             ]

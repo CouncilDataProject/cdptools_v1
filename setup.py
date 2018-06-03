@@ -6,13 +6,12 @@ from setuptools import setup, find_packages
 exclude_dirs = ["v1.0",
                 "docs",
                 "docker",
-                "examples",
                 "work_in_progress"]
 
 PACKAGES = find_packages(exclude=exclude_dirs)
 
 # Get version and release info, which is all stored in cdpprocessor/version.py
-ver_file = os.path.join("cdp", "version.py")
+ver_file = os.path.join("cdptools", "version.py")
 with open(ver_file) as f:
     exec(f.read())
 

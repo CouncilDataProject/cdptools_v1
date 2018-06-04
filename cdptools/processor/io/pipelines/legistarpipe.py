@@ -1,4 +1,4 @@
-from ...utils.checks import *
+from cdptools.utils import checks
 import requests
 import sys
 
@@ -53,7 +53,8 @@ class LegistarPipe:
             A Legistar supported city to query against.
         """
 
-        self.city = check_types(city, [str], CHECK_CITY_ERR)
+        checks.check_types(city, [str], CHECK_CITY_ERR)
+        self.city = city
 
         self.updatable = []
         self.update()
@@ -87,28 +88,30 @@ class LegistarPipe:
         if pages == "all":
             pages = sys.maxsize
 
-        check_types(query, [str], CHECK_QUERY_ERR)
-        check_types(begin, [int], CHECK_BEGIN_ERR)
-        check_types(pages, [int], CHECK_PAGES_ERR)
+        checks.check_types(query, [str], CHECK_QUERY_ERR)
+        checks.check_types(begin, [int], CHECK_BEGIN_ERR)
+        checks.check_types(pages, [int], CHECK_PAGES_ERR)
 
         url = "http://webapi.legistar.com/v1/{c}/{q}?$skip={s}"
         results = []
 
         process = range(begin, begin + (pages*1000), 1000)
         for skip in process:
+            print("Requesting:", url.format(c=self.city, q=query, s=skip))
             try:
                 r = requests.get(url.format(c=self.city, q=query, s=skip))
 
                 if r.status_code == 200:
                     results += r.json()
-                    if len(results) % 1000 != 0:
+                    if len(results) % 1000 != 0 or len(results) == 0:
                         break
 
                 else:
                     raise ValueError("""
 Something went wrong with legistar get.
 Status Code: {err}
-""".format(err=r.status_code))
+Attempted Url: {url}
+""".format(err=r.status_code, url=url.format(c=self.city, q=query, s=skip)))
 
             except requests.exceptions.ConnectionError:
                 raise requests.exceptions.ConnectionError("""
@@ -116,6 +119,7 @@ Something went wrong with legistar connection.
 Could not connect to server.
 """)
 
+        print("Objects returned:", len(results))
         return results
 
     def update(self):

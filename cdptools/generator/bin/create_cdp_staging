@@ -1,16 +1,8 @@
 #!/usr/bin/env python
 
-from cdptools.processor.io.pipelines import LegistarPipe
-import cdptools.utils.checks
+from cdptools.generator.staging import get_legistar_tables
+from cdptools.generator.staging import create_staging_db
 import argparse
-import pathlib
-import json
-import os
-
-# TODO:
-# handle all format with variables
-# save all json files
-# construct condensed db with schema reduction
 
 def main():
     parser = argparse.ArgumentParser(description="Create CDP test/ staging db\
@@ -29,133 +21,7 @@ def main():
     args = parser.parse_args()
 
     get_legistar_tables(args.city, args.store_path, args.update)
-    create_staging_db(args.city, args.store_path, args.update)
-
-def get_legistar_tables(client="seattle", storage="/cdp/stg/", update=False):
-    # ensure param types
-    checks.check_types(client, [str])
-    checks.check_types(storage, [str])
-    checks.check_types(update, [bool])
-
-    client = client.lower()
-    if isinstance(storage, str):
-        storage = pathlib.Path(storage)
-
-    if client not in str(storage):
-        storage /= client
-
-    if not os.path.isdir(storage):
-        os.makedirs(storage)
-
-    print("-" * 80)
-    print("Pulling Legistar tables from client:", client,
-          "\nWill store tables and completed database at:", storage,
-          "\nWill update existing tables:", update)
-    print("-" * 80)
-
-    pipe = LegistarPipe(client)
-
-    simple = ["Actions",
-              "Bodies",
-              "BodyTypes",
-              "CodeSections",
-              "Events",
-              "Indexes",
-              "Matters"
-    ]
-    extended = ["Actions/{ActionId}",
-                "Bodies/{BodyId}",
-                "Bodies/{BodyTypeId}",
-                "CodeSections/{CodeSectionId}",
-                "EventDates/{BodyId}?FutureDatesOnly=True",
-                "Events/{EventId}/\
-                  EventItems?\
-                  &AgendaNote=1\
-                  &MinutesNote=1\
-                  &Attachments=1",
-                "Indexes/{IndexId}",
-                "Matters/{MatterId}"
-    ]
-
-    results = {}
-    for query in simple:
-        request = "v1/{c}/{q}".format(c=client, q=query)
-        request = request.replace(" ", "")
-
-        # TODO:
-        # actual query completion
-
-        results[query] = {}
-        print("Pulled:", request)
-
-    # TODO:
-    # figure out simple map to extended id addition
-    # format_attrs = {(simple + "Id"): results[simple][list(results.keys())[0]]}
-    format_attrs = {"ActionId": 100,
-                    "BodyId": 200,
-                    "BodyTypeId": 300,
-                    "CodeSectionId": 400,
-                    "EventId": 500,
-                    "IndexId": 600,
-                    "MatterId": 700}
-
-    # for query in extended:
-    #     # TODO:
-    #     # dict to attrs convert
-    #     request = "v1/{c}/{q}".format(c=client, q=query.format(format_attrs))
-    #     request = request.replace(" ", "")
-    #
-    #     # TODO:
-    #     # actual query completion
-    #
-    #     results[query] = {}
-    #     print("Pulled:", request)
-
-    print("-" * 80)
-
-    for query, result in results.items():
-        table_store = storage / (query + ".json")
-        if not os.path.exists(table_store) or update:
-            with open(table_store, 'w') as outfile:
-                json.dump(result, outfile)
-                print("Stored:", query)
-        else:
-            print(query, "was previously stored and update is:", update)
-
-    print("-" * 80)
-    print("Legistar table storage complete")
-    print("-" * 80)
-
-    return results
-
-def create_staging_db(client="seattle", storage="/cdp/stg/", update=False):
-    # ensure param types
-    checks.check_types(client, [str])
-    checks.check_types(storage, [str])
-    checks.check_types(update, [bool])
-
-    client = client.lower()
-    if isinstance(storage, str):
-        storage = pathlib.Path(storage)
-
-    if client not in str(storage):
-        storage /= client
-
-    print("-" * 80)
-    print("Creating CDP NoSQL test/ staging database for client:", client,
-          "\nWill store completed json at:", storage,
-          "\nWill update existing json:", update)
-    print("-" * 80)
-
-    for file in os.listdir(storage):
-        print(file)
-
-    # TODO:
-    # process tables into NoSQL schema
-
-    print("-" * 80)
-    print("CDP NoSQL test/ staging database complete")
-    print("-" * 80)
+    # create_staging_db(args.city, args.store_path, args.update)
 
 if __name__ == "__main__":
     main()

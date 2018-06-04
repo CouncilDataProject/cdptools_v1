@@ -1,4 +1,4 @@
-from ..utils.checks import *
+from cdptools.utils import checks
 import requests
 
 def get_legistar_object(city, query="Bodies", begin=0, pages=1):
